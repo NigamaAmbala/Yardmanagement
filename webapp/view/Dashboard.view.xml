@@ -1,0 +1,1143 @@
+<mvc:View
+    controllerName="com.app.yardmanagement.controller.Dashboard"
+    xmlns:html="http://www.w3.org/1999/xhtml"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns="sap.m"
+    xmlns:tnt="sap.tnt"
+    xmlns:l="sap.ui.layout"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:suite="sap.suite.ui.commons"
+    xmlns:viz="sap.viz.ui5.controls"
+    xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
+    xmlns:viz.data="sap.viz.ui5.data"
+    xmlns:smartTable="sap.ui.comp.smarttable"
+    height="100%"
+>
+    <tnt:ToolPage id="toolPage">
+        <tnt:header>
+            <tnt:ToolHeader>
+                <Button
+                    id="sideNavigationToggleButton"
+                    icon="sap-icon://menu2"
+                    type="Transparent"
+                    press=".onSideNavButtonPress"
+                >
+                    <layoutData>
+                        <OverflowToolbarLayoutData priority="NeverOverflow" />
+                    </layoutData>
+                </Button>
+                <Label
+                    class="Heading"
+                    text="Yard Management"
+                />
+                <ToolbarSpacer id="_IDGenToolbarSpacer1" />
+                <ToolbarSpacer id="spacer">
+                    <layoutData>
+                        <OverflowToolbarLayoutData
+                            id="_IDGenOverflowToolbarLayoutData4"
+                            priority="Low"
+                            group="1"
+                        />
+                    </layoutData>
+                </ToolbarSpacer>
+
+                <Button
+                    icon="sap-icon://bell"
+                    press="onNotificationPress"
+                    type="Transparent"
+                >
+                    <customData>
+                        <BadgeCustomData
+                            id="idnotificationsbadge"
+                            visible="true"
+                        />
+                    </customData>
+                </Button>
+            </tnt:ToolHeader>
+        </tnt:header>
+        <tnt:sideContent>
+            <tnt:SideNavigation
+                expanded="true"
+                selectedKey="{/selectedKey}"
+                itemSelect=".onItemSelect"
+            >
+                <tnt:NavigationList
+                    items="{path: '/navigation'}"
+                    class="sidecontent"
+                >
+                    <tnt:NavigationListItem
+                        text="{title}"
+                        icon="{icon}"
+                        enabled="{enabled}"
+                        expanded="{expanded}"
+                        items="{items}"
+                        key="{key}"
+                        class="sidecontent"
+                    >
+                        <tnt:NavigationListItem
+                            text="{title}"
+                            key="{key}"
+                            enabled="{enabled}"
+                            class="sidecontent"
+                        />
+                    </tnt:NavigationListItem>
+                </tnt:NavigationList>
+                <tnt:fixedItem>
+                    <tnt:NavigationList
+                        items="{path: '/fixedNavigation'}"
+                        class="sidecontent"
+                    >
+                        <tnt:NavigationListItem
+                            text="{title}"
+                            icon="{icon}"
+                        />
+                    </tnt:NavigationList>
+                </tnt:fixedItem>
+            </tnt:SideNavigation>
+        </tnt:sideContent>
+        <tnt:mainContents>
+            <NavContainer
+                id="pageContainer"
+                initialPage="page2"
+            >
+                <pages>
+                    <ScrollContainer
+                        id="page1"
+                        horizontal="false"
+                        vertical="true"
+                        height="100%"
+                        class=" "
+                    />
+                    <ScrollContainer
+                        id="page2"
+                        horizontal="false"
+                        vertical="true"
+                        height="100%"
+                        class="sapUiContentPadding"
+                    >
+                        <f:SimpleForm
+                            id="AssignForm"
+                            layout="ResponsiveGridLayout"
+                            editable="true"
+                            columnsM="2"
+                            columnsL="3"
+                            columnsXL="4"
+                            class="SimpleForm"
+                        >
+                            <VBox
+                                id="_IDvehiclenoVBox12"
+                                width="100%"
+                            >
+                                <Label
+                                    id="_IDvehiclenoLabel12"
+                                    text="Vehicle no"
+                                    class="Bold"
+                                />
+                                <Input
+                                    id="idvehiclenoInput12"
+                                    placeholder="Enter vehicle number"
+                                    width="100%"
+                                    value="{localModel>/VDETAILS/Vehicleno}"
+                                    submit=".vehiclenumber"
+                                />
+                            </VBox>
+
+                            <VBox
+                                id="_IDGenVBox4"
+                                width="100%"
+                            >
+                                <Label
+                                    id="_IDGenLabel1"
+                                    text="Driver Name"
+                                    class="Bold"
+                                />
+                                <Input
+                                    id="driverNameInput"
+                                    placeholder="Enter driver's name"
+                                    width="100%"
+                                    value="{localModel>/VDETAILS/Drivername}"
+                                />
+                            </VBox>
+
+                            <VBox
+                                id="_IDGenVBox5"
+                                width="100%"
+                            >
+                                <Label
+                                    id="_IDGenLabel2"
+                                    text="Driver Phone Number"
+                                    class="Bold"
+                                />
+                                <Input
+                                    id="driverPhoneInput"
+                                    placeholder="Enter driver's phone number"
+                                    width="100%"
+                                    type="Tel"
+                                    value="{localModel>/VDETAILS/Phonenumber}"
+                                />
+                            </VBox>
+                            <VBox
+                                id="_IDGenVBox9"
+                                width="100%"
+                            >
+                                <Label
+                                        id="idlabellottype"
+                                        text="Process Type"
+                                        class="Bold"
+                                        
+                                    />
+                                    <Select
+                                        id="idselectvt"
+                                        class="classinputmptc"
+                                        width="100%"
+                                        change="onServiceTypeChange"
+                                    >
+                                        <items>
+                                                <core:Item  id ="iiskllss" text="" key= ""
+                                                />
+                                               
+                                                    <core:Item
+                                                        id="idProcessTypeItems"
+                                                        text="INWARD"
+                                                        key="INWARD"
+                                                    />
+                                                    <core:Item
+                                                        id="idProcessTypeItems13"
+                                                        text="OUTWARD"
+                                                        key="OUTWARD"
+                                                    />
+                                                    </items>
+                                    </Select>
+                            </VBox>
+
+                            <VBox
+                                id="_IDGenVBox6"
+                                width="100%"
+                            >
+                                <Label
+                                    id="_IDGenLabel3"
+                                    text="vehicle Type"
+                                    class="Bold"
+                                />
+                                <Input
+                                    id="vehicletypeInput"
+                                    placeholder="Enter vehicle type"
+                                    width="100%"
+                                    type="Tel"
+                                    value="{localModel>/VDETAILS/Vehicletype}"
+                                />
+                            </VBox>
+
+                            <VBox
+                                id="_IDGenVBox7"
+                                width="100%"
+                            >
+                                <Label
+                                    id="_IDGenLabel4"
+                                    text="Parking Lot Number"
+                                    class="Bold"
+                                />
+                                <ComboBox
+                                        id="idparkingLotSelect"
+                                        width="80%"
+                                        placeholder="Please Select a Slot from Dropdown.. "
+                                        class="SlotNumberBold"
+                                        items="{path: '/ParkingslotsSet',
+                                        filters: [{path: 'Status', operator: 'EQ', value1: 'AVAILABLE'}]}"
+                                    >
+                                        <core:Item id="IDGenItem3" key="{Parkinglot}" text="{Parkinglot}" />
+                                    </ComboBox>
+                            </VBox>
+
+                            <HBox
+                                id="_IDGenHBox1"
+                                width="100%"
+                                alignItems="Center"
+                                class="Hbox"
+                            >
+                                <Button
+                                    id="idbuttonassign"
+                                    text="Assign"
+                                    press="onAssignPressbtn"
+                                    type="Success"
+                                    class="Abutton"
+                                />
+                                <Button
+                                    id="idbuttonunassign"
+                                    text="Unassign"
+                                    press="onUnassignPressbtn"
+                                    type="Negative"
+                                    class="Abutton1"
+                                />
+                                <!-- <Button
+                                        id="idbuttonunclear"
+                                        text="Clear"
+                                        press="onclearPress"
+                                        width="120px"
+                                        type="Accept"
+                                        
+                                    /> -->
+                            </HBox>
+                        </f:SimpleForm>
+                    </ScrollContainer>
+                    <ScrollContainer
+                        id="page3"
+                        horizontal="false"
+                        vertical="true"
+                        height="100%"
+                        class="sapUiContentPadding"
+                    >
+                        <Table
+                            id="idAllSlots"
+                            alternateRowColors="true"
+                            backgroundDesign="Transparent"
+                            items="{/ParkingslotsSet}"
+                            width="35%"
+                            mode="MultiSelect"
+                            class="Allslotsclasstable"
+                        >
+                            <headerToolbar>
+                                <OverflowToolbar id="idSlotsTableHeader1">
+                                    <Title
+                                        id="idTableHeaderTitle1"
+                                        text="All Slots"
+                                        class="Titles"
+                                    />
+
+                                     <ToolbarSpacer
+                                            id="IDGenToolbarSpacer345"
+                                        />
+                                        <!-- <Button
+                                            id="idBtnFilter"
+                                            tooltip="Filter by Status"
+                                            icon="sap-icon://filter"
+                                            press="onFilterButtonPress"
+                                        /> -->
+
+                                </OverflowToolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column id="idSlotNO">
+                                    <Title
+                                        id="idSlotNotitle"
+                                        text="Slot No"
+                                    />
+                                </Column>
+                                <Column id="idprocesstype">
+                                    <Title
+                                        id="idprocesstypetitle"
+                                        text="Process Type"
+                                    />
+                                </Column>
+                                <Column id="idStatus">
+                                    <Title
+                                        id="idStatustitle"
+                                        text="Status"
+                                    />
+                                </Column>
+                            </columns>
+
+                            <items>
+                                <ColumnListItem
+                                    id="idColumnListAllSlots"
+                                    class="AllTables"
+                                >
+                                    <cells>
+                                        <Text
+                                            id="idSlotNoValue"
+                                            text="{Parkinglot}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="idProcessvalue"
+                                            text="{Processtype}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="idstatusvalue"
+                                            text="{Status}"
+                                        />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </ScrollContainer>
+                    <ScrollContainer
+                        id="page4"
+                        horizontal="false"
+                        vertical="true"
+                        height="100%"
+                        class="sapUiContentPadding"
+                    >
+                        <Table
+                            id="idEmptySlots"
+                            alternateRowColors="true"
+                            backgroundDesign="Transparent"
+                            items="{path: '/ParkingslotsSet',
+                            filters: [{path: 'Status', operator: 'EQ', value1: 'AVAILABLE'}]}"
+                            width="35%"
+                            mode="MultiSelect"
+                            class="emptyclasstable"
+                        >
+                            <headerToolbar>
+                                <OverflowToolbar id="idSlotsTableHeader2">
+                                    <Title
+                                        id="idTableHeaderTitle2"
+                                        text="Empty Slots"
+                                        class="Titles"
+                                    />
+                                </OverflowToolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column id="idSlotNO1">
+                                    <Title
+                                        id="idSlotNotitle1"
+                                        text="Slot No"
+                                    />
+                                </Column>
+                                <Column id="idprocesstype2">
+                                    <Title
+                                        id="idprocesstypetitle1"
+                                        text="Status"
+                                    />
+                                </Column>
+
+                                <Column id="idStatus1">
+                                    <Title
+                                        id="idStatustitle1"
+                                        text="Status"
+                                    />
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem id="idColumnListAllSlots1">
+                                    <cells>
+                                        <Text
+                                            id="idSlotNoValue1"
+                                            text="{Parkinglot}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="idProcessvale"
+                                            text="{Processtype}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="idstatusvale"
+                                            text="{Status}"
+                                        />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </ScrollContainer>
+                    <ScrollContainer
+                        id="page5"
+                        horizontal="false"
+                        vertical="true"
+                        height="100%"
+                        class="sapUiContentPadding"
+                    >
+                        <Table
+                            id="idAllocatedSlots"
+                            alternateRowColors="true"
+                            backgroundDesign="Transparent"
+                            items="{/VDEATILSSet}"
+                            mode="MultiSelect"
+                            class="Allocatedslotstableclass"
+                        >
+                            <headerToolbar>
+                                <OverflowToolbar id="idSlotsTableHeader">
+                                    <Title
+                                        id="idTableHeaderTitle"
+                                        text="Allocated Slots"
+                                        class="Titles"
+                                    />
+                                    <ToolbarSpacer id="idTableHeaderSpacer" />
+                                    <SearchField
+                                        id="idSearchField12"
+                                        width="200px"
+                                        placeholder="Search..."
+                                        liveChange="onSearch12"
+                                    />
+                                    <Button
+                                        id="editButton"
+                                        text="Edit"
+                                        type="Transparent"
+                                        press="onEdit"
+                                        icon="sap-icon://edit"
+                                    />
+                                    <Button
+                                        id="saveButton"
+                                        text="Save"
+                                        type="Transparent"
+                                        press="onSave"
+                                        visible="false"
+                                        icon="sap-icon://save"
+                                    />
+                                    <Button
+                                        id="cancelButton"
+                                        text="Cancel"
+                                        type="Transparent"
+                                        press="onCancel"
+                                        visible="false"
+                                        icon="sap-icon://decline"
+                                    />
+                                </OverflowToolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column id="idSlotNO2">
+                                    <Title
+                                        id="idSlotNotitle2"
+                                        text="Lot No"
+                                    />
+                                </Column>
+                                <Column id="idVehicleNumber">
+                                    <Title
+                                        id="idVehicleNumbertitle"
+                                        text="Vehicle No"
+                                    />
+                                </Column>
+                                <Column id="idAssignedOn">
+                                    <Title
+                                        id="idAssignedOntitle"
+                                        text="Assigned On"
+                                    />
+                                </Column>
+                                <Column id="idvehicleType">
+                                    <Title
+                                        id="idvehicleTypetitle"
+                                        text="Vehicle Type"
+                                    />
+                                </Column>
+                                <Column id="idPROCESSType">
+                                    <Title
+                                        id="idPROCESSTypetitle"
+                                        text="Process Type"
+                                    />
+                                </Column>
+                                <Column id="idDriverName">
+                                    <Title
+                                        id="idDriverNametitle"
+                                        text="Driver Name"
+                                    />
+                                </Column>
+                                <Column id="idDriverPhnum">
+                                    <Title
+                                        id="idDriverPhnumtitle"
+                                        text="Phonenumber"
+                                    />
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem
+                                    id="idColumnListAlocatedSlots"
+                                    class="Allocatedtable"
+                                >
+                                    <cells>
+                                        <VBox>
+                                            <Text
+                                                id="idSlotNoValue2"
+                                                text="{Parkinglot}"
+                                            />
+                                            <ComboBox
+                                                id="parkingLotSelectComboBox"
+                                                selectedKey="{Parkinglot}"
+                                                items="{path: '/ParkingslotsSet',
+                                                filters: [{path: 'Status', operator: 'EQ', value1: 'AVAILABLE'}]}"
+                                                visible="false"
+                                            >
+                                                <core:Item
+                                                    id="IDParkinglotnumgen"
+                                                    key="{Parkinglot}"
+                                                    text="{Parkinglot}"
+                                                />
+                                            </ComboBox>
+                                        </VBox>
+                                        <VBox>
+                                            <Text
+                                                id="idVehicleNumber1"
+                                                text="{Vehicleno}"
+                                            />
+                                            <Input
+                                                id="idvehiclenumber"
+                                                value="{Vehicleno}"
+                                                visible="false"
+                                                editable="false"
+                                            />
+                                        </VBox>
+                                        <VBox>
+                                            <Text
+                                                id="idAssignedOn1"
+                                                text="{Intime}"
+                                            />
+                                            <Input
+                                                id="idintime"
+                                                value="{Intime}"
+                                                visible="false"
+                                                editable="false"
+                                            />
+                                        </VBox>
+                                        <VBox>
+                                            <Text
+                                                id="idvehicletype"
+                                                text="{Vehicletype}"
+                                            />
+                                            <Input
+                                                id="idvehicletype12"
+                                                value="{Vehicletype}"
+                                                visible="false"
+                                                editable="false"
+                                            />
+                                        </VBox>
+                                        <VBox>
+                                            <Text
+                                                id="idprocesstype1"
+                                                text="{Processtype}"
+                                            />
+                                            <Input
+                                                id="idprocesstype12"
+                                                value="{Processtype}"
+                                                visible="false"
+                                                editable="false"
+                                            />
+                                        </VBox>
+                                        <VBox>
+                                            <Text
+                                                id="idDrivername"
+                                                text="{Drivername}"
+                                            />
+                                            <Input
+                                                id="iddrivername"
+                                                value="{Drivername}"
+                                                visible="false"
+                                                editable="false"
+                                            />
+                                        </VBox>
+                                        <VBox>
+                                            <Text
+                                                id="idDriverphonenumber"
+                                                text="{Phonenumber}"
+                                            />
+                                            <Input
+                                                id="iddriverPhno"
+                                                value="{Phonenumber}"
+                                                visible="false"
+                                                editable="false"
+                                            />
+                                        </VBox>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </ScrollContainer>
+                    <ScrollContainer
+                        id="page6"
+                        horizontal="false"
+                        vertical="true"
+                        height="100%"
+                        class="sapUiContentPadding"
+                    >
+                        <Table
+                            id="idHistory"
+                            alternateRowColors="true"
+                            backgroundDesign="Transparent"
+                            items="{/historySet}"
+                            mode="MultiSelect"
+                            class="HistoryTablecalss"
+                        >
+                            <headerToolbar>
+                                <OverflowToolbar id="idHistoryTableHeader">
+                                    <Title
+                                        id="idHistoryHeaderTitle"
+                                        text="History"
+                                        class="Titles"
+                                    />
+                                </OverflowToolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column id="idcolvehiclenoHistory">
+                                    <Text
+                                        id="idtexthistoryvhno"
+                                        text="Vehicle No"
+                                    />
+                                </Column>
+                                <Column id="idcoldrivernameHistory">
+                                    <Text
+                                        id="idtexthistoryname"
+                                        text="Driver Name"
+                                    />
+                                </Column>
+                                <Column id="idcoldriverphHistory">
+                                    <Text
+                                        id="idtexthistoryphno"
+                                        text=" Phone Number"
+                                    />
+                                </Column>
+                                 <Column id="idcolProcesstypeHistory">
+                                    <Text
+                                        id="idtexthistoryptype"
+                                        text="Process Type"
+                                    />
+                                </Column>
+                                <Column id="idcolvehicletypeHistory">
+                                    <Text
+                                        id="idtexthistoryvtype"
+                                        text="Vehicle Type"
+                                    />
+                                </Column>
+                                <Column id="idcolparkinglotHistory">
+                                    <Text
+                                        id="idtexthistoryplot"
+                                        text="Slot No"
+                                    />
+                                </Column>
+                                <Column id="idcolintime">
+                                    <Text
+                                        id="idtexthistoryintime"
+                                        text="In Time"
+                                    />
+                                </Column>
+                                <Column id="idcolouttime">
+                                    <Text
+                                        id="idtexthistoryoutime"
+                                        text="Out Time"
+                                    />
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem
+                                    id="Historyslots"
+                                    class="classassigned"
+                                >
+                                    <cells>
+                                        <Text
+                                            id="cellhistoryvno"
+                                            text="{Vehicleno}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellhistorydbname"
+                                            text="{Drivername}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellhistoryph"
+                                            text="{Phonenumber}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellhistoryprocesstype"
+                                            text="{Processtype}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellhistoryvtype"
+                                            text="{Vehicletype}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellhistoryptno"
+                                            text="{Parkinglot}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellhistoryintime"
+                                            text="{Intime}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellhistoryoutime"
+                                            text="{Outtime}"
+                                        />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </ScrollContainer>
+                    <ScrollContainer
+                        id="page7"
+                        horizontal="false"
+                        vertical="true"
+                        height="100%"
+                        class="sapUiContentPadding"
+                    >
+                        <f:SimpleForm
+                            id="reservationForm"
+                            layout="ResponsiveGridLayout"
+                            editable="true"
+                            columnsM="2"
+                            columnsL="3"
+                            columnsXL="4"
+                            class="SimpleForm"
+                        >
+                            <Title
+                                text="RESERVATION"
+                                class="Reserveheading"
+                            />
+                            <VBox id="ReserveVbox">
+                                <Label
+                                    id="idVedornameLabel"
+                                    text="Vendor Name"
+                                    class="Bold"
+                                />
+                                <Input
+                                    id="InputVedorname"
+                                    value="{reserveModel>/Reservations/vedorName}"
+                                    placeholder="Enter Vedor Name"
+                                />
+                                <Label
+                                    id="idVedorphnoLabel"
+                                    text="Vendor phonenumber"
+                                    class="Bold"
+                                />
+                                <Input
+                                    id="InputVedorphno"
+                                    value="{reserveModel>/Reservations/vedorName}"
+                                    placeholder="Enter Vedor phonenumber"
+                                />
+                                <Label
+                                    id="idVehicleNumberLabel"
+                                    text="Vehicle No"
+                                    class="Bold"
+                                />
+                                <Input
+                                    id="InputVehicleno"
+                                    value="{reserveModel>/Reservations/vehicleNo}"
+                                    placeholder="Enter Vehicle Number"
+                                />
+                                <Label
+                                    id="idDriverNameLabel"
+                                    text="Driver Name"
+                                    class="Bold"
+                                />
+                                <Input
+                                    id="InputDriverName"
+                                    value="{reserveModel>/Reservations/driverName}"
+                                    placeholder="Enter Driver Name"
+                                />
+                                <Label
+                                    id="idphonenumberLabel"
+                                    text="Phone Number"
+                                    class="Bold"
+                                />
+                                <Input
+                                    id="InputPhonenumber"
+                                    value="{reserveModel>/Reservations/phoneNumber}"
+                                    placeholder="Enter Phone number"
+                                />
+                                <Label
+                                    id="idVehicletypeLabel"
+                                    text="Vehicle Type"
+                                    class="Bold"
+                                />
+                                <Input
+                                    id="InputVehicletype"
+                                    placeholder="Enter Vehicle Type"
+                                    value="{reserveModel>/Reservations/vehicleType}"
+                                />
+                                <Label
+                                    id="idProcesstypeLabel"
+                                    text="Process Type"
+                                    class="Bold"
+                                />
+                                <Select
+                                        id="idprocessselect"
+                                        class="classinputmptc"
+                                        width="100%"
+                                        change="onServiceTypeChangeR"
+                                    >
+                                        <items>
+                                                <core:Item  id ="iiskllss1" text="" key= ""
+                                                />
+                                               
+                                                    <core:Item
+                                                        id="idProcessTypeItems31"
+                                                        text="INWARD"
+                                                        key="INWARD"
+                                                    />
+                                                    <core:Item
+                                                        id="idProcessTypeItems12"
+                                                        text="OUTWARD"
+                                                        key="OUTWARD"
+                                                    />
+                                                    </items>
+                                    </Select>
+                                <Label
+                                    id="idParkinglotLabel"
+                                    text="Parking lot"
+                                    class="Bold"
+                                />
+                                 <ComboBox
+                                        id="idparkingLotSelect1"
+                                        width="80%"
+                                        placeholder="Please Select a Slot from Dropdown.. "
+                                        class="SlotNumberBold"
+                                        items="{path: '/ParkingslotsSet',
+                                        filters: [{path: 'Status', operator: 'EQ', value1: 'AVAILABLE'}]}"
+                                    >
+                                        <core:Item id="IDGenItem7" key="{Parkinglot}" text="{Parkinglot}" />
+                                    </ComboBox>
+                                <Label
+                                    id="idEstimatedtimeLabel"
+                                    text="Estimated Time"
+                                    class="Bold"
+                                />
+                                <DateTimePicker
+                                    id="InputEstimatedtime"
+                                    placeholder="Enter Time"
+                                    value="{reserveModel>/Reservations/ReservedDate}"
+                                />
+                                <HBox
+                                    id="_IDReserveHBox1"
+                                    alignItems="Center"
+                                    class="Hbox"
+                                >
+                                    <Button
+                                        id="idbuttonreserve"
+                                        text="Reserve"
+                                        press="onReservePressbtn"
+                                        type="Success"
+                                        class="Button"
+                                    />
+                                </HBox>
+                            </VBox>
+                        </f:SimpleForm>
+                    </ScrollContainer>
+                    <ScrollContainer
+                        id="page8"
+                        horizontal="false"
+                        vertical="true"
+                        height="100%"
+                        class="sapUiContentPadding"
+                    >
+                        <Table
+                            id="idReserved"
+                            alternateRowColors="true"
+                            backgroundDesign="Transparent"
+                            items="{/RESERVATIONSSet}"
+                            mode="MultiSelect"
+                            class="Reserveslottableclass"
+                        >
+                            <headerToolbar>
+                                <OverflowToolbar id="idReservedTableHeader">
+                                    <Title
+                                        id="idReservedHeaderTitle"
+                                        text="Reserved Slots"
+                                        class="Titles"
+                                    />
+                                    <ToolbarSpacer id="idTableHeaderreserve" />
+                                    <SearchField
+                                        id="idSearchField"
+                                        width="200px"
+                                        placeholder="Search..."
+                                        liveChange="onSearch"
+                                    />
+                                    <Button
+                                        id="idassign"
+                                        press="onpressassignrd"
+                                        text="assign"
+                                        type="Success"
+                                    />
+                                </OverflowToolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column id="idcolvedornameReserved">
+                                    <Text
+                                        id="idtextreservedvendor"
+                                        text="Vendor name"
+                                    />
+                                </Column>
+                                 <Column id="idcolvedornaPHReserved">
+                                    <Text
+                                        id="idtextreservedvendorPH"
+                                        text="Vendor phonenumber"
+                                    />
+                                </Column>
+                                <Column id="idcolvehiclenoReserved">
+                                    <Text
+                                        id="idtextreservedvhno"
+                                        text="Vehicle No"
+                                    />
+                                </Column>
+                                <Column id="idcoldrivername">
+                                    <Text
+                                        id="idtextreservedname"
+                                        text="Driver Name"
+                                    />
+                                </Column>
+                                <Column id="idcoldriverphno">
+                                    <Text
+                                        id="idtextyphno"
+                                        text=" Phone Number"
+                                    />
+                                </Column>
+                                <Column id="idcolvehicletype">
+                                    <Text
+                                        id="idtextvtype"
+                                        text="Vehicle Type"
+                                    />
+                                </Column>
+                                <Column id="idcolparkinglot">
+                                    <Text
+                                        id="idtextplot"
+                                        text="Slot No"
+                                    />
+                                </Column>
+
+                                <Column id="idcolReservedtime">
+                                    <Text
+                                        id="idtextoutime"
+                                        text="Reserved Time"
+                                    />
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem
+                                    id="Reservedslots"
+                                    class="classassigned"
+                                >
+                                    <cells>
+                                        <Text
+                                            id="cellvendorname"
+                                            text="{Vendorname}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellvendorphno"
+                                            text="{Vendorphno}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellvno"
+                                            text="{Vehicleno}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="celldbname"
+                                            text="{Drivername}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellph"
+                                            text="{Phonenumber}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellvtype"
+                                            text="{Vehicletype}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellptno"
+                                            text="{Parkinglot}"
+                                        />
+                                    </cells>
+
+                                    <cells>
+                                        <Text
+                                            id="cellReservedetime"
+                                            text="{Reservedtime}"
+                                        />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </ScrollContainer>
+                    <ScrollContainer
+                        id="page9"
+                        horizontal="false"
+                        vertical="true"
+                        height="100%"
+                        class="sapUiContentPadding"
+                    >
+                        <VBox
+                            id="vbox"
+                            fitContainer="true"
+                        >
+                            <suite:ChartContainer id="chartContainer">
+                                <suite:content>
+                                    <suite:ChartContainerContent
+                                        id="chartContainerContent"
+                                    >
+                                        <suite:content>
+                                            <viz:VizFrame
+                                                id="idpiechart"
+                                                width="auto"
+                                                uiConfig="{applicationSet:'fiori'}"
+                                                vizType="pie"
+                                                vizProperties="{
+                                                 plotArea: {
+                                                 dataLabel: {visible: true}
+                                                  },
+                                                 title: {text:'Parking Lot Availability'}
+                                                 }"
+                                                selectData="myOnClickHandler"
+                                                renderComplete="handleRenderComplete"
+                                            >
+                                                <viz:dataset>
+                                                    <viz.data:FlattenedDataset
+                                                        id="flattenData"
+                                                        data="{ParkingLotModel>/Items}"
+                                                    >
+                                                        <viz.data:dimensions>
+                                                            <viz.data:DimensionDefinition
+                                                                id="_IDGenDimensionDefinition1"
+                                                                name="Status"
+                                                                value="{ParkingLotModel>Status}"
+                                                            />
+                                                        </viz.data:dimensions>
+                                                        <viz.data:measures>
+                                                            <viz.data:MeasureDefinition
+                                                                id="_IDGenMeasureDefinition1"
+                                                                name="Count"
+                                                                value="{ParkingLotModel>Count}"
+                                                            />
+                                                        </viz.data:measures>
+                                                    </viz.data:FlattenedDataset>
+                                                </viz:dataset>
+                                                <viz:feeds>
+                                                    <viz.feeds:FeedItem
+                                                        id="_IDGenFeedItem1"
+                                                        uid="size"
+                                                        type="Measure"
+                                                        values="Count"
+                                                    />
+                                                    <viz.feeds:FeedItem
+                                                        id="_IDGenFeedItem2"
+                                                        uid="color"
+                                                        type="Dimension"
+                                                        values="Status"
+                                                    />
+                                                </viz:feeds>
+                                            </viz:VizFrame>
+                                        </suite:content>
+                                    </suite:ChartContainerContent>
+                                </suite:content>
+                            </suite:ChartContainer>
+                        </VBox>
+                    </ScrollContainer>
+                </pages>
+            </NavContainer>
+        </tnt:mainContents>
+    </tnt:ToolPage>
+</mvc:View>

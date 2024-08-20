@@ -1,0 +1,99 @@
+/* Enter your custom styles here */
+.Homepageclass {
+    background-image: url("https://www.aceinvest.com/thumbs/projects/parking-warehousing/lubbeek_ambachtenstraat_8a_8608-4-1400x800.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100vh;
+  }
+  .Heading {
+    font-weight:bolder;
+    color: black;
+  }
+  .Bold {
+    font-weight:bolder;
+    color:black;
+  }
+  .sapUiContentPadding {
+    /* background:rgba(186, 134, 134, 0.356); */
+    background-image: url("https://www.aceinvest.com/thumbs/projects/parking-warehousing/lubbeek_ambachtenstraat_8a_8608-4-1400x800.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 100vh;
+  }
+  .sidecontent {
+    background-color:lightslategray
+  }
+  .Flexbox {
+    padding-right: 50%;
+    margin-top: 60px;
+  }
+  .SimpleForm{
+    padding-right: 50%;
+    margin-left: 250px;
+    margin-top: 50px;
+  }
+  .Reserveheading{
+    margin-bottom: 20px;
+    color: brown;
+  }
+  .Hbox{
+    margin-top: 20px;
+  }
+  .Button{
+    margin-left: 320px;
+  }
+  .Button1{
+    margin-left: 20px;
+  }
+  .Button2{
+    margin-left: 230px;
+  }
+  .Titles{
+    color: rgb(147, 25, 25);
+  }
+  .searchInput{
+    margin-right: 50px;
+  }
+  .customPopoverContent {
+    width: 600px;
+    height: 200px;
+    overflow: auto; /* Optional: Add this to handle overflow content */
+   
+}
+
+.Abutton{
+  margin-left: 230px;
+}
+.Abutton1{
+  margin-left: 20px;
+}
+.sapUiContentPaddingAllslots{
+  background-color: rgb(230, 196, 185);
+}
+.Allocatedtable{
+  background-color: rgb(136, 118, 118);
+}
+.popOverClass{
+  
+  width: 600px;
+  height: 200px;
+  overflow: auto; /* Optional: Add this to handle overflow content */
+ 
+}
+.Allslotsclasstable{
+  background-color:aliceblue;
+}
+.emptyclasstable{
+  background-color: rgb(234, 220, 234);
+}
+.Allocatedslotstableclass{
+  background-color:linen;
+}
+.HistoryTablecalss{
+  background-color: beige;
+}
+.Reserveslottableclass{
+  background-color: lavenderblush;
+}

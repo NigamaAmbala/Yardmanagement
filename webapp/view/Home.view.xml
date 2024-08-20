@@ -1,0 +1,18 @@
+<mvc:View controllerName="com.app.yardmanagement.controller.Home"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns="sap.m">
+     <Page id="page" 
+          title="Parking Lot Management"
+           class="Homepageclass">
+       <headerContent>
+             <Button
+                id="idloginbutton"
+                text="Login"
+                press="Onpressloginbtn"
+                icon="sap-icon://visits"
+                type="Success"
+            />
+
+        </headerContent>
+    </Page>
+</mvc:View>

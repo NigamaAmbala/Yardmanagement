@@ -36,6 +36,13 @@
 			"icon":"sap-icon://detail-view",
 			"key": "page8"
 		},
+
+		{
+			"title": "VendorRequests",
+			"icon":"sap-icon://pie-chart",
+			"key": "page10"
+		},
+
 		{
 			"title": "Charts",
 			"icon":"sap-icon://pie-chart",

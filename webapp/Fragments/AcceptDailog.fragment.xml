@@ -1,0 +1,144 @@
+<core:FragmentDefinition
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form"
+    xmlns="sap.m"
+>
+    <Dialog
+        id="idAcceptDialog"
+        resizable="true"
+        draggable="true"
+        contentWidth="30%"
+        title="Reserve slot"
+    >
+    <beginButton>
+            <Button
+                id="idAcceptButton"
+                text="Reserve"
+                press="onReserveSlotBtnPress"
+                type="Success"
+            />
+        </beginButton>
+        <endButton>
+            <Button
+                id="idCancelButton"
+                text="Cancel"
+                press="onCloseDialog"
+                type="Negative"
+            />
+        </endButton>
+        <content>
+        <f:SimpleForm
+            id="ReserveForm"
+                editable="true"
+                layout="ResponsiveGridLayout"
+                labelSpanXL="3"
+                labelSpanL="3"
+                labelSpanM="3"
+                labelSpanS="12"
+                adjustLabelSpan="false"
+                emptySpanXL="4"
+                emptySpanL="4"
+                emptySpanM="4"
+                emptySpanS="0"
+                columnsXL="1"
+                columnsL="1"
+                columnsM="1"
+                singleContainerFullSize="false"
+        >
+            <VBox id="ReserveVbox56">
+                <Label
+                    id="idVedornameLabel12"
+                    text="Vendor Name"
+                    class="Bold"
+                />
+                <Input
+                    id="InputVedorname12"
+                    value="{oConfirmRequestModel>/Vendorname}"
+                    placeholder="Enter Vedor Name"
+                />
+                <Label
+                    id="idVedorphnoLabel12"
+                    text="Vendor phonenumber"
+                    class="Bold"
+                />
+                <Input
+                    id="InputVedorphno12"
+                    value="{oConfirmRequestModel>/Vendorphno}"
+                    placeholder="Enter Vedor phonenumber"
+                />
+                <Label
+                    id="idVehicleNumberLabel12"
+                    text="Vehicle No"
+                    class="Bold"
+                />
+                <Input
+                    id="InputVehicleno12"
+                    value="{oConfirmRequestModel>/Vehicleno}"
+                    placeholder="Enter Vehicle Number"
+                />
+                <Label
+                    id="idDriverNameLabel12"
+                    text="Driver Name"
+                    class="Bold"
+                />
+                <Input
+                    id="InputDriverName12"
+                    value="{oConfirmRequestModel>/Drivername}"
+                    placeholder="Enter Driver Name"
+                />
+                <Label
+                    id="idphonenumberLabel12"
+                    text="Phone Number"
+                    class="Bold"
+                />
+                <Input
+                    id="InputPhonenumber12"
+                    value="{oConfirmRequestModel>/Phonenumber}"
+                    placeholder="Enter Phone number"
+                />
+                <Label
+                    id="idVehicletypeLabel12"
+                    text="Vehicle Type"
+                    class="Bold"
+                />
+                <Input
+                    id="InputVehicletype12"
+                    placeholder="Enter Vehicle Type"
+                    value="{oConfirmRequestModel>/Vehicletype}"
+                />
+                <Label
+                    id="idProcesstypeLabel12"
+                    text="Process Type"
+                    class="Bold"
+                />
+                <Input
+                    id="InputProcesstype12"
+                    placeholder="Enter Vehicle Type"
+                    value="{oConfirmRequestModel>/Processtype}"
+                />
+               
+                <Label
+                    id="idParkinglotLabel12"
+                    text="Parking lot"
+                    class="Bold"
+                />
+                <ComboBox
+                    id="idselectSlotReserve"
+                    placeholder="Please Select Slot from Dropdown"
+                >
+                </ComboBox>
+                <Label
+                    id="idEstimatedtimeLabel12"
+                    text="Estimated Time"
+                    class="Bold"
+                />
+                <DateTimePicker
+                    id="InputEstimatedtime12"
+                    placeholder="Enter Time"
+                    value="{oConfirmRequestModel>/Reservedtime}"
+                />
+                </VBox>
+            </f:SimpleForm>
+        </content>
+    </Dialog>
+</core:FragmentDefinition>

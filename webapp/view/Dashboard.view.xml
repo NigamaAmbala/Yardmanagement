@@ -42,6 +42,12 @@
                         />
                     </layoutData>
                 </ToolbarSpacer>
+                
+                <!-- <Button id = "requestbtn" 
+                        text = "Request"
+                         press="onRequest" 
+                         type = "Attention">
+                </Button> -->
 
                 <Button
                     icon="sap-icon://bell"
@@ -1056,6 +1062,164 @@
                                     <cells>
                                         <Text
                                             id="cellReservedetime"
+                                            text="{Reservedtime}"
+                                        />
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </ScrollContainer>
+                    <ScrollContainer
+                        id="page10"
+                        horizontal="false"
+                        vertical="true"
+                        height="100%"
+                        class="sapUiContentPadding"
+                    >
+                        <Table
+                            id="idRequest"
+                            alternateRowColors="true"
+                            backgroundDesign="Transparent"
+                            items="{/VENDORRESERVATIONSet}"
+                            mode="MultiSelect"
+                            class="Reserveslottableclass"
+                        >
+                            <headerToolbar>
+                                <OverflowToolbar id="idRequestTableHeader">
+                                    <Title
+                                        id="idRequestHeaderTitle"
+                                        text="Requests"
+                                        class="Titles"
+                                    />
+                                    <ToolbarSpacer id="idTableHeaderrequest" />
+                                    <SearchField
+                                        id="idSearchField1"
+                                        width="200px"
+                                        placeholder="Search..."
+                                        liveChange="onSearch"
+                                    />
+                                    <Button
+                                        id="idreq"
+                                        press="onConformbtn"
+                                        text="Confirm"
+                                        type="Success"
+                                    />
+                                </OverflowToolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column id="idcolvedornameRequest">
+                                    <Text
+                                        id="idtextrequestvendor"
+                                        text="Vendor name"
+                                    />
+                                </Column>
+                                 <Column id="idcolvedornaPHRequest">
+                                    <Text
+                                        id="idtextrequestvendorPH"
+                                        text="Vendor phonenumber"
+                                    />
+                                </Column>
+                                <Column id="idcolvehiclenoRequest">
+                                    <Text
+                                        id="idtextrequestvhno"
+                                        text="Vehicle No"
+                                    />
+                                </Column>
+                                <Column id="idcolrequestrdrivername">
+                                    <Text
+                                        id="idtextrequestname"
+                                        text="Driver Name"
+                                    />
+                                </Column>
+                                <Column id="idcolrequestdriverphno">
+                                    <Text
+                                        id="idtextrequestphno"
+                                        text=" Phone Number"
+                                    />
+                                </Column>
+                                <Column id="idcolrequestvehicletype">
+                                    <Text
+                                        id="idtextrequestvtype"
+                                        text="Vehicle Type"
+                                    />
+                                </Column>
+                                <Column id="idcolrequestProcesstype">
+                                    <Text
+                                        id="idtextrequestptype"
+                                        text="Process Type"
+                                    />
+                                </Column>
+                                <!-- <Column id="idcolrequestparkinglot">
+                                    <Text
+                                        id="idtextrequestplot"
+                                        text="Slot No"
+                                    />
+                                </Column> -->
+
+                                <Column id="idrequesttime">
+                                    <Text
+                                        id="idtextrequestoutime"
+                                        text="Reserved Time"
+                                    />
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem
+                                    id="Requests"
+                                    class="classassigned"
+                                >
+                                    <cells>
+                                        <Text
+                                            id="cellReqvendorname"
+                                            text="{Vendorname}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellreqvendorphno"
+                                            text="{Vendorphno}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellreqvno"
+                                            text="{Vehicleno}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellreqdbname"
+                                            text="{Drivername}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellreqph"
+                                            text="{Phonenumber}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellreqvtype"
+                                            text="{Vehicletype}"
+                                        />
+                                    </cells>
+                                    <cells>
+                                        <Text
+                                            id="cellreqptype"
+                                            text="{Processtype}"
+                                        />
+                                    </cells>
+                                    <!-- <cells>
+                                        <Text
+                                            id="cellreqptno"
+                                            text="{Parkinglot}"
+                                        />
+                                    </cells> -->
+
+                                    <cells>
+                                        <Text
+                                            id="cellreqReservedetime"
                                             text="{Reservedtime}"
                                         />
                                     </cells>

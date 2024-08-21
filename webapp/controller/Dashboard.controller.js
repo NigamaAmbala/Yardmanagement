@@ -66,17 +66,6 @@ function (Controller,JSONModel, Fragment, Filter, FilterOperator, MessageBox, Me
         },
         onAssignPressbtn: async function () {
             var oView = this.getView();
-            // if (oView.byId("idProcessType").getVisible() === true) {
-            //     var oSelect = oView.byId("idProcessType");
-            //     var oSelectedItem = oSelect.getSelectedItem();
-            //     var sSelectedText = oSelectedItem ? oSelectedItem.getText() : null;
-            //     console.log("Selected Text: " + sSelectedText);
- 
-            // }
-            // else {
- 
-            //     var sSelectedText = oView.byId("idAlotProcess").getText();
-            // }
             var oDateFormat = DateFormat.getDateTimeInstance({
                 pattern: "yyyy-MM-dd HH:mm:ss" // Define your desired pattern here
             });
@@ -141,7 +130,7 @@ function (Controller,JSONModel, Fragment, Filter, FilterOperator, MessageBox, Me
                             sap.m.MessageBox.error("Failed to update: " + oError.message);
                         }.bind(this)
                     });
-             this.printAssignmentDetails(oPayload.VDETAILS);
+             this.printAssignmentDetails();
  
             } catch (error) {
                 console.error("Error:", error);
@@ -879,68 +868,365 @@ function (Controller,JSONModel, Fragment, Filter, FilterOperator, MessageBox, Me
  
         // },
 
-        printAssignmentDetails: function (oPayload) {
-            // Generate QR code data
-            var qrData = `${oPayload.VDETAILS.Vehicleno}`;
-
-            // Get current date and time
-            var currentDate = new Date().toLocaleDateString();
-            var currentTime = new Date().toLocaleTimeString();
-
+        printAssignmentDetails: function () {
+            debugger
+            // Fetch values from the view
+            var currentDateTime = new Date();
+            var formattedDate = currentDateTime.toLocaleDateString();
+            var formattedTime = currentDateTime.toLocaleTimeString();
+            var sSlotNumber = this.byId("idparkingLotSelect").getSelectedKey();
+            var sVehicleNumber = this.byId("idvehiclenoInput12").getValue();
+            var sVehicleType = this.byId("idselectvt").getSelectedKey();
+            var sDriverNumber = this.byId("driverPhoneInput").getValue();
+            var sDriverName = this.byId("driverNameInput").getValue();
+           
+     
             // Create a new window for printing
             var printWindow = window.open('', '', 'height=600,width=800');
+     
+            // Write HTML content to the print window
+            printWindow.document.write('<html><head><title>Print Receipt</title>');
+            printWindow.document.write('<style>');
+            printWindow.document.write('body { font-family: Arial, sans-serif; margin: 20px; }');
+            printWindow.document.write('.details-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }');
+            printWindow.document.write('.details-table th, .details-table td { border: 1px solid #000; padding: 8px; text-align: left; }');
+            printWindow.document.write('.details-table th { background-color: #f2f2f2; }');
+            printWindow.document.write('.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }');
+            printWindow.document.write('.date-time { flex-grow: 1; }');
+            printWindow.document.write('.qr-code { margin-right: 50px; }');
+            printWindow.document.write('.truck-image { text-align: center; margin-top: 20px; }');
+            printWindow.document.write('.logo { position: absolute; top: 20px; right: 20px; }');
+            printWindow.document.write('.Dummy { padding:1rem; }');
+            printWindow.document.write('</style>');
+            printWindow.document.write('</head><body>');
+     
+            // Add the logo to the top right corner
+            printWindow.document.write('<div class="logo">');
+            printWindow.document.write('<img src="https://artihcus.com/assets/img/AG-logo.png" height="50"/>'); // Reduced size
+            printWindow.document.write('</div>');
+            printWindow.document.write('<div class="Dummy">');
+            printWindow.document.write('<div class="Dummy">');
+            printWindow.document.write('</div>');
+     
+            printWindow.document.write('<div class="title">');
+            printWindow.document.write('<h1>Parking Lot Allocation Slip:</h1>');
+            printWindow.document.write('</div>');
+            printWindow.document.write('<div class="header">');
+            printWindow.document.write('<div class="date-time">');
+            printWindow.document.write('<p><strong>Date:</strong> ' + formattedDate + '</p>');
+            printWindow.document.write('<p><strong>Time:</strong> ' + formattedTime + '</p>');
+            printWindow.document.write('</div>');
+            printWindow.document.write('<div class="qr-code" id="qrcode"></div>');
+            printWindow.document.write('</div>');
+            printWindow.document.write('<table class="details-table">');
+            printWindow.document.write('<tr><th>Property</th><th>Details</th></tr>');
+            printWindow.document.write('<tr><td>Slot Number</td><td>' + sSlotNumber + '</td></tr>');
+            printWindow.document.write('<tr><td>Vehicle Number</td><td>' + sVehicleNumber + '</td></tr>');
+            printWindow.document.write('<tr><td>Vehicle Type</td><td>' + sVehicleType + '</td></tr>');
+            printWindow.document.write('<tr><td>Driver Phone Number</td><td>' + sDriverNumber + '</td></tr>');
+            printWindow.document.write('<tr><td>Driver Name</td><td>' + sDriverName + '</td></tr>');
+            // printWindow.document.write('<tr><td>Delivery Type</td><td>' + sServiceType + '</td></tr>');
+            printWindow.document.write('</table>');
+            printWindow.document.write('<div class="truck-image">');
+            printWindow.document.write('</div>');
+     
+            // Close document and initiate QR code generation
             printWindow.document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>');
+            printWindow.document.write('<script>');
+            printWindow.document.write('setTimeout(function() {');
+            printWindow.document.write('new QRCode(document.getElementById("qrcode"), {');
+            printWindow.document.write('text: "' + sVehicleNumber + '",'); // QR code contains vehicle number
+            printWindow.document.write('width: 100,');
+            printWindow.document.write('height: 100');
+            printWindow.document.write('});');
+            printWindow.document.write('}, 1000);'); // Adjust the timeout for QR code rendering
+            printWindow.document.write('</script>');
+     
+            // Close document
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.focus();
+     
+            // Wait for QR code to be fully rendered before printing
+            setTimeout(function () {
+              printWindow.print();
+            }, 1500); // Timeout to ensure the QR code is rendered before printing
+          },
 
-            setTimeout(() => {
-                printWindow.document.write('<html><head><title>Print Assigned Details</title>');
-                printWindow.document.write('<style>');
-                printWindow.document.write('body { font-family: Arial, sans-serif; }');
-                printWindow.document.write('.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }');
-                printWindow.document.write('.date-time { display: flex; flex-direction: column; }');
-                printWindow.document.write('.date-time div { margin-bottom: 5px; }');
-                printWindow.document.write('.details-table { width: 100%; border-collapse: collapse; margin-top: 20px; }');
-                printWindow.document.write('.details-table th, .details-table td { border: 1px solid #000; padding: 8px; text-align: left; }');
-                printWindow.document.write('.details-table th { background-color: #f2f2f2; color: #333; }');
-                printWindow.document.write('.details-table td { color: #555; }');
-                printWindow.document.write('.field-cell { background-color: #e0f7fa; color: #00796b; }');
-                printWindow.document.write('.details-cell { background-color: #fffde7; color: #f57f17; }');
-                printWindow.document.write('.qr-container { text-align: right; }');
-                printWindow.document.write('</style>');
-                printWindow.document.write('</head><body>');
-                printWindow.document.write('<div class="print-container">');
-                printWindow.document.write('<h1>Parking-slot Details</h1>');
-                printWindow.document.write('<div class="header">');
-                printWindow.document.write('<div class="date-time">');
-                printWindow.document.write('<div><strong>Date:</strong> ' + currentDate + '</div>');
-                printWindow.document.write('<div><strong>Time:</strong> ' + currentTime + '</div>');
-                printWindow.document.write('</div>');
-                printWindow.document.write('<div class="qr-container"><div id="qrcode"></div></div>');
-                printWindow.document.write('</div>');
+        //   onSearch12: async function (oEvent) {
+        //     var sQuery = oEvent.getParameter("newValue").trim();
+        //     var oTable = this.byId("idAllocatedSlots");
+        //     var oModel = this.getView().getModel(); // Fetch the model again
+        
+        //     if (!oModel) {
+        //         console.error("Model is not set on the view");
+        //         return;
+        //     }
+        
+        //     // If search query is empty, reload and display all items
+        //     if (sQuery === "") {
+        //         try {
+        //             var sPath = "/VDEATILSSet"; // Your EntitySet path
+        
+        //             // Fetch the data from the OData service
+        //             var aAllData = await new Promise((resolve, reject) => {
+        //                 oModel.read(sPath, {
+        //                     success: function (oData) {
+        //                         resolve(oData.results);
+        //                     },
+        //                     error: function (oError) {
+        //                         console.error("Failed to fetch all data:", oError);
+        //                         reject(oError);
+        //                     }
+        //                 });
+        //             });
+        
+        //             // Create a new JSON model with all the data
+        //             var oAllDataModel = new sap.ui.model.json.JSONModel(aAllData);
+        
+        //             // Bind the all data model to the table
+        //             oTable.setModel(oAllDataModel);
+        //             oTable.bindItems({
+        //                 path: "/",
+        //                 template: oTable.getBindingInfo("items").template
+        //             });
+        //         } catch (error) {
+        //             console.error("Error fetching all data:", error);
+        //         }
+        //         return;
+        //     }
+        
+        //     // If there is a search query, perform the manual filtering
+        //     var aContexts = oTable.getBinding("items").getContexts();
+        //     var aItems = aContexts.map(function (oContext) {
+        //         return oContext.getObject();
+        //     });
+        
+        //     // Filter the data based on the query
+        //     var aFilteredItems = aItems.filter(function (oItem) {
+        //         return oItem.Parkinglot.includes(sQuery) ||
+        //                oItem.Vehicleno.includes(sQuery) ||
+        //                oItem.Intime.includes(sQuery) ||
+        //                oItem.Vehicletype.includes(sQuery) ||
+        //                oItem.Processtype.includes(sQuery) ||
+        //                oItem.Drivername.includes(sQuery) ||
+        //                oItem.Phonenumber.includes(sQuery);
+        //     });
+        
+        //     // Create a new JSON model with the filtered data
+        //     var oFilteredModel = new sap.ui.model.json.JSONModel(aFilteredItems);
+        
+        //     // Bind the filtered model to the table
+        //     oTable.setModel(oFilteredModel);
+        //     oTable.bindItems({
+        //         path: "/",
+        //         template: oTable.getBindingInfo("items").template
+        //     });
+        // } 
+        onConformbtn: async function () {
+            var oSelected = this.byId("idRequest").getSelectedItem();
+            if (oSelected) {
+                var oSelectedObject = oSelected.getBindingContext().getObject();
+                var oServiceType = oSelectedObject.Processtype;
+
+                // Create and set a JSON model to store the selected item details
+                const oConfirmRequestModel = new sap.ui.model.json.JSONModel({
+                    Vendorname: oSelectedObject.Vendorname,
+                    Vendorphno: oSelectedObject.Vendorphno,
+                    Drivername: oSelectedObject.Drivername,
+                    Phonenumber: oSelectedObject.Phonenumber,
+                    Vehicletype: oSelectedObject.Vehicletype,
+                    Vehicleno: oSelectedObject.Vehicleno,
+                    Processtype: oServiceType
+                });
+                this.getView().setModel(oConfirmRequestModel, "oConfirmRequestModel");
+
+                // Load the dialog fragment if not already loaded
+                if (!this.oDialog) {
+                    this.oDialog = await Fragment.load({
+                        id: this.getView().getId(),
+                        name: "com.app.yardmanagement.Fragments.AcceptDailog",
+                        controller: this
+                    });
+                    this.getView().addDependent(this.oDialog);
+                }
+
+                var oModel = this.getOwnerComponent().getModel();
+                var oThis = this;
+                // Fetch all slots data
+                oModel.read("/ParkingslotsSet", {
+                    success: function (oData) {
+                        // Filter available slots based on Service Type
+                        var aFilteredSlots = oData.results.filter(function (slot) {
+                            return slot.Status === "AVAILABLE" && slot.Processtype === oServiceType;
+                        });
+
+                        // Get the ComboBox control
+                        var oComboBox = oThis.byId("idselectSlotReserve");
+                        // Clear existing items from ComboBox
+                        oComboBox.removeAllItems();
+                        // Add filtered slots to the ComboBox
+                        aFilteredSlots.forEach(function (slot) {
+                            oComboBox.addItem(new sap.ui.core.ListItem({
+                                key: slot.Parkinglot,
+                                text: slot.Parkinglot
+                            }));
+                        });
+                        // Open the dialog
+                        oThis.oDialog.open();
+                    },
+                    error: function (oError) {
+                        sap.m.MessageBox.error("Failed to load slot data.");
+                    }
+                });
+            } else {
+                // Show a message if no vendor is selected
+                sap.m.MessageToast.show("Please Select a Vendor to Confirm A Slot Reservation..!");
+            }
+        },
+        onCloseDialog: function() {
+            if (this.oDialog.isOpen()) {
+                this.oDialog.close();
+            }
+         },
+
+         //dailog box reserve button
+         onReserveSlotBtnPress: async function () {
+
+            debugger;
+
+            const svendorName = this.getView().byId("InputVedorname12").getValue();
+            const svendorphno = this.getView().byId("InputVedorphno12").getValue();
+            const svehicleNo = this.getView().byId("InputVehicleno12").getValue();
+            const sdriverName = this.getView().byId("InputDriverName12").getValue();
+            const sphoneNumber = this.getView().byId("InputPhonenumber12").getValue();
+            const svehicleType = this.getView().byId("InputVehicletype12").getValue();
+            const sProcessType = this.getView().byId("InputProcesstype12").getValue();
+            const sReservedDate = this.getView().byId("InputEstimatedtime12").getValue();
+
+            var oDateFormat = DateFormat.getDateTimeInstance({
+                pattern: "yyyy-MM-dd HH:mm:ss" // Define your desired pattern here
+            });
+ 
+            var currentDate = new Date(); // Current system date and time
+            var formattedDateTime = oDateFormat.format(currentDate);
+ 
+            const oReserveModel = new JSONModel({
+
+                Reservations: {
+
+                    Vendorname: svendorName,
+                    Vendorphno:svendorphno,
+                    Vehicleno: svehicleNo,
+                    Drivername: sdriverName,
+                    Phonenumber: sphoneNumber,
+                    Processtype: sProcessType,
+                    Vehicletype: svehicleType,
+                    Reservedtime: formattedDateTime,
+                    Parkinglot: "",
+                }
+            });
+            this.getView().setModel(oReserveModel, "reserveModel");
+            const oPayload = this.getView().byId("page7").getModel("reserveModel").getProperty("/");
+            const oModel = this.getView().byId("pageContainer").getModel();
+            const plotNo = this.getView().byId("idselectSlotReserve").getValue();
+            oPayload.Reservations.Parkinglot = plotNo;
+
+           // var oSelectedRow = this.byId("idRequest").getSelectedItem().getBindingContext().getObject();
+            var orow = this.byId("idRequest").getSelectedItem().getBindingContext().getPath();
+
+            // const oprocesstype = this.getView().byId("InputProcesstype12").getSelectedKey();
+            // oPayload.Reservations.Processtype = oprocesstype;
+ 
+            // if (!svehicleNo || !svehicleNo.match(/^[\w\d]{1,10}$/)) {
+            //     sap.m.MessageBox.error("Please enter a valid vehicle number (alphanumeric, up to 10 characters).");
+            //     return;
+            // }
+ 
+            // const vehicleExists = await this.checkVehicleExists(oModel, svehicleNo);
+            // if (vehicleExists) {
+            //     sap.m.MessageBox.error("Vehicle number already Assigned. Please enter a different vehicle number.");
+            //     return;
+            // }
+             
+            
+            //  //valid phone number
+            // if (!/^\d{10}$/.test(sphoneNumber)) {
+            //     this.getView().byId("InputPhonenumber").setValueState("Error").setValueStateText("Mobile number must be a '10-digit number'.");
+            //     return;
+
+            // } else {
+            //     this.getView().byId("InputPhonenumber").setValueState("None");
+            // }
 
 
-                printWindow.document.write('<table class="details-table">');
-                printWindow.document.write('<tr><th>Field</th><th>Details</th></tr>');
-                printWindow.document.write('<tr><td class="field-cell">Vehicle Number</td><td class="details-cell">' + oPayload.VDETAILS.Vehicleno + '</td></tr>');
-                printWindow.document.write('<tr><td class="field-cell">Driver Name</td><td class="details-cell">' + oPayload.VDETAILS.Drivername + '</td></tr>');
-                printWindow.document.write('<tr><td class="field-cell">Phone Number</td><td class="details-cell">' + oPayload.VDETAILS.Phonenumber + '</td></tr>');
-                printWindow.document.write('<tr><td class="field-cell">Process Type</td><td class="details-cell">' + oPayload.VDETAILS.Processtype + '</td></tr>');
-                printWindow.document.write('<tr><td class="field-cell">Parking Slot Number</td><td class="details-cell">' + oPayload.VDETAILS.Parkinglot+ '</td></tr>');
-                printWindow.document.write('</table>');
+            // //validate vehicle number
+            // if (!/^[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}$/.test(svehicleNo)) {  // Example format: XX00XX0000
+            //     this.getView().byId("InputVehicleno").setValueState("Error").setValueStateText("Vehicle number format Should be like this 'AP21BE5678'.");
+            //     return;
+            // } else {
+            //     this.getView().byId("InputVehicleno").setValueState("None");
+            // }
 
-                // Include QRCode library
-                printWindow.document.write('<script>');
-                printWindow.document.write('new QRCode(document.getElementById("qrcode"), { text: "' + qrData + '", width: 100, height: 100 });');
-                printWindow.document.write('</script>');
+            // var bDriverNumberExists = await this.checkIfExistsReserve(oModel, "/RESERVATIONSSet", "Phonenumber", sphoneNumber);
+            // var bVehicleNumberExists = await this.checkIfExistsReserve(oModel, "/RESERVATIONSSet", "Vehicleno", svehicleNo);
+        
+            // if (bDriverNumberExists || bVehicleNumberExists) {
+            //     sap.m.MessageBox.error("vehicle number or phone number already reserved.");
+            //     return;
+            // }
+ 
+ 
+            // var isReserved = await this.checkParkingLotReservation12(oModel, plotNo);
+            // if (isReserved) {
+            //     sap.m.MessageBox.error(`Parking lot is already reserved. Please select another parking lot.`, {
+            //         title: "Reservation Information",
+            //         actions: sap.m.MessageBox.Action.OK
+            //     });
+            //     return;
+            // }
+ 
+            try {
+                // Assuming createData method sends a POST request
+                await this.createData(oModel, oPayload.Reservations, "/RESERVATIONSSet");
+                
+                const updatedParkingLot = {
+                     Parkinglot: plotNo,
+                     Status: "RESERVED", // Assuming false represents empty parking
+                     Processtype:sProcessType // Assuming false represents empty parking
+                    // Add other properties if needed
+                };
 
-                printWindow.document.write('</div>');
-                printWindow.document.write('</body></html>');
+                //Update parking lot entity
+                oModel.update("/ParkingslotsSet('" + plotNo + "')", updatedParkingLot, {
+                    success: function () { 
 
-                printWindow.document.close();
-                printWindow.focus();
+                        oModel.remove(orow, {
+                            success: function () { 
+                                oModel.refresh()
+                                sap.m.MessageToast.show(`${svehicleNo} Reserved to Slot No ${plotNo}`);
+                            },
+                            error: function() {
 
-                printWindow.print();
+                            }
 
-            }, 2000);
+                        })
+                    },
+                    error: function (oError) {
+                        sap.m.MessageBox.error("Failed to update: " + oError.message);
+                    }
+                });
+
+
+ 
+                // Clear fields or perform any necessary actions
+
+            } catch (error) {
+                console.error("Error:", error);
+            }
+
+            this.onclearPress12();
+ 
         },
 
     });

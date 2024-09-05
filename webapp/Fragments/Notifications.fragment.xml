@@ -1,0 +1,50 @@
+<core:FragmentDefinition
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
+    xmlns="sap.m"
+>
+    <Popover
+        id="idnotificationDialog"
+        title="Notifications"
+        placement="PreferredLeftOrFlip"
+        resizable="true"
+        class="popOverClass"
+    >
+        <customHeader>
+            <Bar id="idbarnotify">
+                <contentLeft>
+                    <Text
+                        id="idtextnotify"
+                        text="Notifications"
+                    />
+                </contentLeft>
+            </Bar>
+        </customHeader>
+        <Table
+            id="idUserLoans"
+            alternateRowColors="true"
+            backgroundDesign="Transparent"
+            items="{/VENDORRESERVATIONSet}"
+        >
+            <columns>
+                <Column id="idIsbnColumn">
+                    <Title
+                        id="idIsbntitle"
+                        text="Parking Lot Reservations"
+                    />
+                </Column>
+            </columns>
+ 
+            <items>
+                <ColumnListItem id="idColumnListBooksLoan">
+                    <cells>
+                        <Text
+                            id="idBISBNvalue"
+                            text="{Notify}"
+                        />
+                    </cells>
+                </ColumnListItem>
+            </items>
+        </Table>
+    </Popover>
+</core:FragmentDefinition>

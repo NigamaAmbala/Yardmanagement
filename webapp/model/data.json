@@ -39,7 +39,7 @@
 
 		{
 			"title": "VendorRequests",
-			"icon":"sap-icon://pie-chart",
+			"icon":"sap-icon://request",
 			"key": "page10"
 		},
 

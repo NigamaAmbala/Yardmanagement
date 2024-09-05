@@ -42,7 +42,7 @@
                         />
                     </layoutData>
                 </ToolbarSpacer>
-                
+
                 <!-- <Button id = "requestbtn" 
                         text = "Request"
                          press="onRequest" 
@@ -69,10 +69,7 @@
                 selectedKey="{/selectedKey}"
                 itemSelect=".onItemSelect"
             >
-                <tnt:NavigationList
-                    items="{path: '/navigation'}"
-                    class="sidecontent"
-                >
+                <tnt:NavigationList items="{path: '/navigation'}">
                     <tnt:NavigationListItem
                         text="{title}"
                         icon="{icon}"
@@ -98,6 +95,7 @@
                         <tnt:NavigationListItem
                             text="{title}"
                             icon="{icon}"
+                            class="sidecontent"
                         />
                     </tnt:NavigationList>
                 </tnt:fixedItem>
@@ -132,6 +130,10 @@
                             columnsXL="4"
                             class="SimpleForm"
                         >
+                            <Title
+                                text="ASSIGN SLOT"
+                                class="Reserveheading"
+                            />
                             <VBox
                                 id="_IDvehiclenoVBox12"
                                 width="100%"
@@ -180,7 +182,7 @@
                                     id="driverPhoneInput"
                                     placeholder="Enter driver's phone number"
                                     width="100%"
-                                    type="Tel"
+                                    type="Number"
                                     value="{localModel>/VDETAILS/Phonenumber}"
                                 />
                             </VBox>
@@ -189,33 +191,35 @@
                                 width="100%"
                             >
                                 <Label
-                                        id="idlabellottype"
-                                        text="Process Type"
-                                        class="Bold"
-                                        
-                                    />
-                                    <Select
-                                        id="idselectvt"
-                                        class="classinputmptc"
-                                        width="100%"
-                                        change="onServiceTypeChange"
-                                    >
-                                        <items>
-                                                <core:Item  id ="iiskllss" text="" key= ""
-                                                />
-                                               
-                                                    <core:Item
-                                                        id="idProcessTypeItems"
-                                                        text="INWARD"
-                                                        key="INWARD"
-                                                    />
-                                                    <core:Item
-                                                        id="idProcessTypeItems13"
-                                                        text="OUTWARD"
-                                                        key="OUTWARD"
-                                                    />
-                                                    </items>
-                                    </Select>
+                                    id="idlabellottype"
+                                    text="Process Type"
+                                    class="Bold"
+                                />
+                                <Select
+                                    id="idselectvt"
+                                    class="classinputmptc"
+                                    width="100%"
+                                    change="onServiceTypeChange"
+                                >
+                                    <items>
+                                        <core:Item
+                                            id="iiskllss"
+                                            text=""
+                                            key=""
+                                        />
+
+                                        <core:Item
+                                            id="idProcessTypeItems"
+                                            text="INWARD"
+                                            key="INWARD"
+                                        />
+                                        <core:Item
+                                            id="idProcessTypeItems13"
+                                            text="OUTWARD"
+                                            key="OUTWARD"
+                                        />
+                                    </items>
+                                </Select>
                             </VBox>
 
                             <VBox
@@ -246,15 +250,19 @@
                                     class="Bold"
                                 />
                                 <ComboBox
-                                        id="idparkingLotSelect"
-                                        width="80%"
-                                        placeholder="Please Select a Slot from Dropdown.. "
-                                        class="SlotNumberBold"
-                                        items="{path: '/ParkingslotsSet',
+                                    id="idparkingLotSelect"
+                                    width="80%"
+                                    placeholder="Please Select a Slot from Dropdown.. "
+                                    class="SlotNumberBold"
+                                    items="{path: '/ParkingslotsSet',
                                         filters: [{path: 'Status', operator: 'EQ', value1: 'AVAILABLE'}]}"
-                                    >
-                                        <core:Item id="IDGenItem3" key="{Parkinglot}" text="{Parkinglot}" />
-                                    </ComboBox>
+                                >
+                                    <core:Item
+                                        id="IDGenItem3"
+                                        key="{Parkinglot}"
+                                        text="{Parkinglot}"
+                                    />
+                                </ComboBox>
                             </VBox>
 
                             <HBox
@@ -300,7 +308,7 @@
                             alternateRowColors="true"
                             backgroundDesign="Transparent"
                             items="{/ParkingslotsSet}"
-                            width="35%"
+                            width="45%"
                             mode="MultiSelect"
                             class="Allslotsclasstable"
                         >
@@ -312,16 +320,20 @@
                                         class="Titles"
                                     />
 
-                                     <ToolbarSpacer
-                                            id="IDGenToolbarSpacer345"
-                                        />
-                                        <!-- <Button
+                                    <ToolbarSpacer id="IDGenToolbarSpacer345" />
+
+                                    <SearchField
+                                        id="idSearchFieldallslots"
+                                        width="200px"
+                                        placeholder="Search..."
+                                        liveChange="onSearchALL"
+                                    />
+                                    <!-- <Button
                                             id="idBtnFilter"
                                             tooltip="Filter by Status"
                                             icon="sap-icon://filter"
                                             press="onFilterButtonPress"
                                         /> -->
-
                                 </OverflowToolbar>
                             </headerToolbar>
                             <columns>
@@ -665,6 +677,13 @@
                                         text="History"
                                         class="Titles"
                                     />
+                                    <ToolbarSpacer id="idTableHeadehistory" />
+                                    <SearchField
+                                        id="idSearchFieldhistory"
+                                        width="200px"
+                                        placeholder="Search..."
+                                        liveChange="onSearchH"
+                                    />
                                 </OverflowToolbar>
                             </headerToolbar>
                             <columns>
@@ -686,7 +705,7 @@
                                         text=" Phone Number"
                                     />
                                 </Column>
-                                 <Column id="idcolProcesstypeHistory">
+                                <Column id="idcolProcesstypeHistory">
                                     <Text
                                         id="idtexthistoryptype"
                                         text="Process Type"
@@ -824,6 +843,7 @@
                                     id="InputVehicleno"
                                     value="{reserveModel>/Reservations/vehicleNo}"
                                     placeholder="Enter Vehicle Number"
+                                    submit=".vehiclenumberReserve"
                                 />
                                 <Label
                                     id="idDriverNameLabel"
@@ -861,42 +881,49 @@
                                     class="Bold"
                                 />
                                 <Select
-                                        id="idprocessselect"
-                                        class="classinputmptc"
-                                        width="100%"
-                                        change="onServiceTypeChangeR"
-                                    >
-                                        <items>
-                                                <core:Item  id ="iiskllss1" text="" key= ""
-                                                />
-                                               
-                                                    <core:Item
-                                                        id="idProcessTypeItems31"
-                                                        text="INWARD"
-                                                        key="INWARD"
-                                                    />
-                                                    <core:Item
-                                                        id="idProcessTypeItems12"
-                                                        text="OUTWARD"
-                                                        key="OUTWARD"
-                                                    />
-                                                    </items>
-                                    </Select>
+                                    id="idprocessselect"
+                                    class="classinputmptc"
+                                    width="100%"
+                                    change="onServiceTypeChangeR"
+                                >
+                                    <items>
+                                        <core:Item
+                                            id="iiskllss1"
+                                            text=""
+                                            key=""
+                                        />
+
+                                        <core:Item
+                                            id="idProcessTypeItems31"
+                                            text="INWARD"
+                                            key="INWARD"
+                                        />
+                                        <core:Item
+                                            id="idProcessTypeItems12"
+                                            text="OUTWARD"
+                                            key="OUTWARD"
+                                        />
+                                    </items>
+                                </Select>
                                 <Label
                                     id="idParkinglotLabel"
                                     text="Parking lot"
                                     class="Bold"
                                 />
-                                 <ComboBox
-                                        id="idparkingLotSelect1"
-                                        width="80%"
-                                        placeholder="Please Select a Slot from Dropdown.. "
-                                        class="SlotNumberBold"
-                                        items="{path: '/ParkingslotsSet',
+                                <ComboBox
+                                    id="idparkingLotSelect1"
+                                    width="80%"
+                                    placeholder="Please Select a Slot from Dropdown.. "
+                                    class="SlotNumberBold"
+                                    items="{path: '/ParkingslotsSet',
                                         filters: [{path: 'Status', operator: 'EQ', value1: 'AVAILABLE'}]}"
-                                    >
-                                        <core:Item id="IDGenItem7" key="{Parkinglot}" text="{Parkinglot}" />
-                                    </ComboBox>
+                                >
+                                    <core:Item
+                                        id="IDGenItem7"
+                                        key="{Parkinglot}"
+                                        text="{Parkinglot}"
+                                    />
+                                </ComboBox>
                                 <Label
                                     id="idEstimatedtimeLabel"
                                     text="Estimated Time"
@@ -967,7 +994,7 @@
                                         text="Vendor name"
                                     />
                                 </Column>
-                                 <Column id="idcolvedornaPHReserved">
+                                <Column id="idcolvedornaPHReserved">
                                     <Text
                                         id="idtextreservedvendorPH"
                                         text="Vendor phonenumber"
@@ -1082,7 +1109,7 @@
                             backgroundDesign="Transparent"
                             items="{/VENDORRESERVATIONSet}"
                             mode="MultiSelect"
-                            class="Reserveslottableclass"
+                            class="Requestslottableclass"
                         >
                             <headerToolbar>
                                 <OverflowToolbar id="idRequestTableHeader">
@@ -1096,13 +1123,19 @@
                                         id="idSearchField1"
                                         width="200px"
                                         placeholder="Search..."
-                                        liveChange="onSearch"
+                                        liveChange="onSearchV"
                                     />
                                     <Button
                                         id="idreq"
                                         press="onConformbtn"
                                         text="Confirm"
                                         type="Success"
+                                    />
+                                    <Button
+                                        id="idrequestreject"
+                                        press="onRejectReservePress"
+                                        text="Reject"
+                                        type="Negative"
                                     />
                                 </OverflowToolbar>
                             </headerToolbar>
@@ -1113,7 +1146,7 @@
                                         text="Vendor name"
                                     />
                                 </Column>
-                                 <Column id="idcolvedornaPHRequest">
+                                <Column id="idcolvedornaPHRequest">
                                     <Text
                                         id="idtextrequestvendorPH"
                                         text="Vendor phonenumber"

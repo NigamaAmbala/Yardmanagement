@@ -38,6 +38,13 @@ function (Controller,JSONModel, Fragment, Filter, FilterOperator, MessageBox, Me
 
             this.getView().setModel(oLocalModel, "localModel");
 
+            var today = new Date();  // Get the current date
+
+            // Get the date picker element by its ID ("InputEstimatedtime")
+            var oDateTimePicker = this.getView().byId("InputEstimatedtime");
+
+            // Set the minimum date for the date picker to today's date
+            oDateTimePicker.setMinDate(today);
             
 
 
@@ -65,6 +72,7 @@ function (Controller,JSONModel, Fragment, Filter, FilterOperator, MessageBox, Me
             }
         },
         onAssignPressbtn: async function () {
+            debugger;
             var oView = this.getView();
             var oDateFormat = DateFormat.getDateTimeInstance({
                 pattern: "yyyy-MM-dd HH:mm:ss" // Define your desired pattern here
@@ -96,6 +104,12 @@ function (Controller,JSONModel, Fragment, Filter, FilterOperator, MessageBox, Me
                 this.getView().byId("idvehiclenoInput12").setValueState("None");
             } 
 
+            var oVehicleExist = await this.checkVehicleNo(oModel, oPayload.VDETAILS.Vehicleno)
+            if (oVehicleExist) {
+                MessageToast.show("Vehicle already exsist")
+                return
+            };
+
             var bDriverNumberExists = await this.checkIfExists(oModel, "/VDEATILSSet", "Phonenumber", oPayload.VDETAILS.Phonenumber);
             var plotAssigned = await this.checkIfExists(oModel, "/VDEATILSSet", "Parkinglot", oPayload.VDETAILS.Parkinglot);
         
@@ -103,19 +117,11 @@ function (Controller,JSONModel, Fragment, Filter, FilterOperator, MessageBox, Me
                 MessageBox.error(" plot Number or Phone number already assigned ");
                 return;
             }
-
-            var oVehicleExist = await this.checkVehicleNo(oModel, oPayload.VDETAILS.Vehicleno)
-            if (oVehicleExist) {
-                MessageToast.show("Vehicle already exsist")
-                return
-            };
- 
+            
             try {
                 // Assuming createData method sends a POST request
  
-                await this.createData(oModel, oPayload.VDETAILS, "/VDEATILSSet");
-
-                MessageToast.show("Parking lot assigned successfully")
+                await this.createData(oModel, oPayload.VDETAILS, "/VDEATILSSet")
 
                 var sPath = this.byId("idparkingLotSelect").getSelectedItem().getBindingContext().getPath();
                     const updatedParkingLot = {
@@ -125,23 +131,57 @@ function (Controller,JSONModel, Fragment, Filter, FilterOperator, MessageBox, Me
                     };
                     oModel.update(sPath, updatedParkingLot, {
                         success: function () {
+                            sap.m.MessageToast.show(`${Vehicleno} allocated to Slot No ${plotNo}`);
                         }.bind(this),
                         error: function (oError) {
                             sap.m.MessageBox.error("Failed to update: " + oError.message);
                         }.bind(this)
                     });
-             this.printAssignmentDetails();
- 
+            
+               //   start SMS
+               const accountSid = "ACfcd333bcb3dc2c2febd267ce455a6762"
+               const authToken = "687323f325394ff3b30f44a83444c2b2"
+
+               // debugger
+               const toNumber = `+91${Phonenumber}`
+               const fromNumber = '+13613109079';
+               const messageBody = `Hello ${Drivername},\n\nYour vehicle with Vehicle number ${Vehicleno} is allocated to the Slot ${plotNo}.`;
+
+
+               // Twilio API endpoint for sending messages
+               const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+
+
+               // Send POST request to Twilio API using jQuery.ajax
+               $.ajax({
+                   url: url,
+                   type: 'POST',
+                   async: true,
+                   headers: {
+                       'Authorization': 'Basic ' + btoa(accountSid + ':' + authToken)
+                   },
+                   data: {
+                       To: toNumber,
+                       From: fromNumber,
+                       Body: messageBody
+                   },
+                   success: function (data) {
+                       MessageToast.show('if number exists SMS will be sent!');
+                   },
+                   error: function (error) {
+                       MessageToast.show('Failed to send SMS: ' + error);
+                   }
+               });
+
+               // sms endR
+
             } catch (error) {
                 console.error("Error:", error);
             }
+            this.printAssignmentDetails();
             this.onclearPress1();
  
             // var sMessage = `Hello, ${Drivername} your vehicle with vehicle number:${Vehicleno}  is allocated to slot number:${plotNo}`
- 
-            // oView.byId("idAlotProcess").setVisible(false);
- 
-            // oView.byId("idProcessType").setVisible(true);
             // this.onSms(phone, sMessage);
  
         },
@@ -721,7 +761,7 @@ function (Controller,JSONModel, Fragment, Filter, FilterOperator, MessageBox, Me
                 });
             });
         },
-
+       // in reserved slots assign button
         onpressassignrd: async function () {
             debugger
             var oSelected = this.byId("idReserved").getSelectedItems();
@@ -755,6 +795,7 @@ function (Controller,JSONModel, Fragment, Filter, FilterOperator, MessageBox, Me
             debugger
             this.getView().byId("page8").setModel(resmodel, "resmodel");
             this.getView().byId("page8").getModel("resmodel").getProperty("/");
+
             oModel.create("/VDEATILSSet", resmodel.getData(), {
                 success: function (odata) {
                     debugger
@@ -776,6 +817,40 @@ function (Controller,JSONModel, Fragment, Filter, FilterOperator, MessageBox, Me
                                 }
 
                             })
+
+                const accountSid = "ACfcd333bcb3dc2c2febd267ce455a6762"
+                const authToken = "687323f325394ff3b30f44a83444c2b2"
+ 
+                // debugger
+                const toNumber = `+91${oSelectedRow.Phonenumber}`
+                const fromNumber = '+13613109079';
+                const messageBody = `Hello ${oSelectedRow.Drivername},Your vehicle with Vehicle number ${oSelectedRow.Vehicleno} is allocated to the Slot ${oSelectedRow.Parkinglot}.`;
+ 
+ 
+                // Twilio API endpoint for sending messages
+                const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+ 
+ 
+                // Send POST request to Twilio API using jQuery.ajax
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    async: true,
+                    headers: {
+                        'Authorization': 'Basic ' + btoa(accountSid + ':' + authToken)
+                    },
+                    data: {
+                        To: toNumber,
+                        From: fromNumber,
+                        Body: messageBody
+                    },
+                    success: function (data) {
+                        MessageToast.show('if number exists SMS will be sent!');
+                    },
+                    error: function (error) {
+                        MessageToast.show('Failed to send SMS: ' + error);
+                    }
+                });
                         },
                         error: function (oError) {
                             sap.m.MessageBox.error("Failed to update : " + oError.message);
@@ -808,15 +883,18 @@ function (Controller,JSONModel, Fragment, Filter, FilterOperator, MessageBox, Me
                         Items: [
                             {
                                 Status: "AVAILABLE",
-                                Count: availableCount
+                                Count: availableCount,
+                                Status:`AVAILABLE - ${availableCount}`
                             },
                             {
                                 Status: "Occupied",
-                                Count: occupiedCount
+                                Count: occupiedCount,
+                                Status:`Occupied - ${occupiedCount}`
                             },
                             {
                                 Status: "RESERVED",
-                                Count: reserveCount
+                                Count: reserveCount,  
+                                Status:`RESERVED - ${reserveCount}`
                               }
                         ]
                     };
@@ -829,45 +907,7 @@ function (Controller,JSONModel, Fragment, Filter, FilterOperator, MessageBox, Me
                 }
             });
         },
-        // onSearch: function (event) {
-        //     debugger
-        //     var sQuery = event.getSource().getValue();
-        //     var oTable = this.byId("idReserved");
-        //     var oBinding = oTable.getBinding("items");
- 
-        //     if (oBinding) {
-        //         var oFilter = new sap.ui.model.Filter([
-        //             new Filter("Parkinglot", FilterOperator.Contains, sQuery),
-        //             new Filter("Vehicleno", FilterOperator.Contains, sQuery),
-        //             new Filter("Drivername", FilterOperator.Contains, sQuery),
-        //             new Filter("Phonenumber", FilterOperator.Contains, sQuery),
-        //             new Filter("Processtype", FilterOperator.Contains, sQuery),
-        //             new Filter("Vehicletype", FilterOperator.Contains, sQuery),
-
-        //         ], false);
-        //         oBinding.filter(oFilter);
-        //     }
- 
-        // },
-        // onSearch12: function (event) {
-        //     debugger
-        //     var sQuery = event.getSource().getValue();
-        //     var oTable = this.byId("idAllocatedSlots");
-        //     var oBinding = oTable.getBinding("items");
- 
-        //     if (oBinding) {
-        //         var oFilter = new sap.ui.model.Filter([
-        //             new Filter("Parkinglot", FilterOperator.Contains, sQuery),
-        //             new Filter("Vehicleno", FilterOperator.Contains, sQuery),
-        //             new Filter("Drivername", FilterOperator.Contains, sQuery),
-        //             new Filter("Phonenumber", FilterOperator.Contains, sQuery)
-
-        //         ], false);
-        //         oBinding.filter(oFilter);
-        //     }
- 
-        // },
-
+        // when you click on assign it should print along the details
         printAssignmentDetails: function () {
             debugger
             // Fetch values from the view
@@ -952,77 +992,7 @@ function (Controller,JSONModel, Fragment, Filter, FilterOperator, MessageBox, Me
               printWindow.print();
             }, 1500); // Timeout to ensure the QR code is rendered before printing
           },
-
-        //   onSearch12: async function (oEvent) {
-        //     var sQuery = oEvent.getParameter("newValue").trim();
-        //     var oTable = this.byId("idAllocatedSlots");
-        //     var oModel = this.getView().getModel(); // Fetch the model again
-        
-        //     if (!oModel) {
-        //         console.error("Model is not set on the view");
-        //         return;
-        //     }
-        
-        //     // If search query is empty, reload and display all items
-        //     if (sQuery === "") {
-        //         try {
-        //             var sPath = "/VDEATILSSet"; // Your EntitySet path
-        
-        //             // Fetch the data from the OData service
-        //             var aAllData = await new Promise((resolve, reject) => {
-        //                 oModel.read(sPath, {
-        //                     success: function (oData) {
-        //                         resolve(oData.results);
-        //                     },
-        //                     error: function (oError) {
-        //                         console.error("Failed to fetch all data:", oError);
-        //                         reject(oError);
-        //                     }
-        //                 });
-        //             });
-        
-        //             // Create a new JSON model with all the data
-        //             var oAllDataModel = new sap.ui.model.json.JSONModel(aAllData);
-        
-        //             // Bind the all data model to the table
-        //             oTable.setModel(oAllDataModel);
-        //             oTable.bindItems({
-        //                 path: "/",
-        //                 template: oTable.getBindingInfo("items").template
-        //             });
-        //         } catch (error) {
-        //             console.error("Error fetching all data:", error);
-        //         }
-        //         return;
-        //     }
-        
-        //     // If there is a search query, perform the manual filtering
-        //     var aContexts = oTable.getBinding("items").getContexts();
-        //     var aItems = aContexts.map(function (oContext) {
-        //         return oContext.getObject();
-        //     });
-        
-        //     // Filter the data based on the query
-        //     var aFilteredItems = aItems.filter(function (oItem) {
-        //         return oItem.Parkinglot.includes(sQuery) ||
-        //                oItem.Vehicleno.includes(sQuery) ||
-        //                oItem.Intime.includes(sQuery) ||
-        //                oItem.Vehicletype.includes(sQuery) ||
-        //                oItem.Processtype.includes(sQuery) ||
-        //                oItem.Drivername.includes(sQuery) ||
-        //                oItem.Phonenumber.includes(sQuery);
-        //     });
-        
-        //     // Create a new JSON model with the filtered data
-        //     var oFilteredModel = new sap.ui.model.json.JSONModel(aFilteredItems);
-        
-        //     // Bind the filtered model to the table
-        //     oTable.setModel(oFilteredModel);
-        //     oTable.bindItems({
-        //         path: "/",
-        //         template: oTable.getBindingInfo("items").template
-        //     });
-        // } 
+        //conform button in vendor requests page
         onConformbtn: async function () {
             var oSelected = this.byId("idRequest").getSelectedItem();
             if (oSelected) {
@@ -1037,7 +1007,8 @@ function (Controller,JSONModel, Fragment, Filter, FilterOperator, MessageBox, Me
                     Phonenumber: oSelectedObject.Phonenumber,
                     Vehicletype: oSelectedObject.Vehicletype,
                     Vehicleno: oSelectedObject.Vehicleno,
-                    Processtype: oServiceType
+                    Processtype: oServiceType,
+                    Reservedtime: oSelectedObject.Reservedtime
                 });
                 this.getView().setModel(oConfirmRequestModel, "oConfirmRequestModel");
 
@@ -1132,60 +1103,7 @@ function (Controller,JSONModel, Fragment, Filter, FilterOperator, MessageBox, Me
             const plotNo = this.getView().byId("idselectSlotReserve").getValue();
             oPayload.Reservations.Parkinglot = plotNo;
 
-           // var oSelectedRow = this.byId("idRequest").getSelectedItem().getBindingContext().getObject();
             var orow = this.byId("idRequest").getSelectedItem().getBindingContext().getPath();
-
-            // const oprocesstype = this.getView().byId("InputProcesstype12").getSelectedKey();
-            // oPayload.Reservations.Processtype = oprocesstype;
- 
-            // if (!svehicleNo || !svehicleNo.match(/^[\w\d]{1,10}$/)) {
-            //     sap.m.MessageBox.error("Please enter a valid vehicle number (alphanumeric, up to 10 characters).");
-            //     return;
-            // }
- 
-            // const vehicleExists = await this.checkVehicleExists(oModel, svehicleNo);
-            // if (vehicleExists) {
-            //     sap.m.MessageBox.error("Vehicle number already Assigned. Please enter a different vehicle number.");
-            //     return;
-            // }
-             
-            
-            //  //valid phone number
-            // if (!/^\d{10}$/.test(sphoneNumber)) {
-            //     this.getView().byId("InputPhonenumber").setValueState("Error").setValueStateText("Mobile number must be a '10-digit number'.");
-            //     return;
-
-            // } else {
-            //     this.getView().byId("InputPhonenumber").setValueState("None");
-            // }
-
-
-            // //validate vehicle number
-            // if (!/^[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}$/.test(svehicleNo)) {  // Example format: XX00XX0000
-            //     this.getView().byId("InputVehicleno").setValueState("Error").setValueStateText("Vehicle number format Should be like this 'AP21BE5678'.");
-            //     return;
-            // } else {
-            //     this.getView().byId("InputVehicleno").setValueState("None");
-            // }
-
-            // var bDriverNumberExists = await this.checkIfExistsReserve(oModel, "/RESERVATIONSSet", "Phonenumber", sphoneNumber);
-            // var bVehicleNumberExists = await this.checkIfExistsReserve(oModel, "/RESERVATIONSSet", "Vehicleno", svehicleNo);
-        
-            // if (bDriverNumberExists || bVehicleNumberExists) {
-            //     sap.m.MessageBox.error("vehicle number or phone number already reserved.");
-            //     return;
-            // }
- 
- 
-            // var isReserved = await this.checkParkingLotReservation12(oModel, plotNo);
-            // if (isReserved) {
-            //     sap.m.MessageBox.error(`Parking lot is already reserved. Please select another parking lot.`, {
-            //         title: "Reservation Information",
-            //         actions: sap.m.MessageBox.Action.OK
-            //     });
-            //     return;
-            // }
- 
             try {
                 // Assuming createData method sends a POST request
                 await this.createData(oModel, oPayload.Reservations, "/RESERVATIONSSet");
@@ -1217,17 +1135,411 @@ function (Controller,JSONModel, Fragment, Filter, FilterOperator, MessageBox, Me
                     }
                 });
 
-
+                //   start SMS
+                const accountSid = "ACfcd333bcb3dc2c2febd267ce455a6762"
+                const authToken = "687323f325394ff3b30f44a83444c2b2"
  
-                // Clear fields or perform any necessary actions
+                // debugger
+                const toNumber = `+91${svendorphno}`
+                const fromNumber = '+13613109079';
+                const messageBody = `Hello, ${svendorName} your vehicle with vehicle number:${svehicleNo}  is allocated to slot number:${plotNo}.`;
+ 
+ 
+                // Twilio API endpoint for sending messages
+                const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+ 
+ 
+                // Send POST request to Twilio API using jQuery.ajax
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    async: true,
+                    headers: {
+                        'Authorization': 'Basic ' + btoa(accountSid + ':' + authToken)
+                    },
+                    data: {
+                        To: toNumber,
+                        From: fromNumber,
+                        Body: messageBody
+                    },
+                    success: function (data) {
+                        MessageToast.show('if number exists SMS will be sent!');
+                    },
+                    error: function (error) {
+                        MessageToast.show('Failed to send SMS: ' + error);
+                    }
+                });
+
+
+                this.oDialog.close();
 
             } catch (error) {
                 console.error("Error:", error);
             }
-
+             
             this.onclearPress12();
+            this.oDialog.close();
  
         },
+        onNotificationPress: async function (oEvent) {
+            var oButton = oEvent.getSource(),
+                oView = this.getView();
+            if (!this._pPopover) {
+                this._pPopover = Fragment.load({
+                    id: oView.getId(),
+                    name: "com.app.yardmanagement.Fragments.Notifications",
+                    controller: this
+                }).then(function (oPopover) {
+                    oView.addDependent(oPopover);
+                    oPopover.setModel(oModel);
+                    return oPopover;
+                });
+            }
+            this._pPopover.then(function (oPopover) {
+                oPopover.openBy(oButton);
+            });
+            var oModel = this.getOwnerComponent().getModel();
+            this.getView().byId("idnotificationDialog").setModel(oModel)
+        },
+       
+        onModel: async function () {
+            var oModel = this.getOwnerComponent().getModel();
+            var that = this;
+            await oModel.read("/VENDORRESERVATIONSet", {
+                success: function (oData) {
+                    var t = oData.results.length;
+                    that.byId("idnotificationsbadge").setValue(t);
+                },
+                error: function () {
+                }
+            })
+
+            oModel.refresh()
+        },
+        onBeforeRendering: function () {
+            this.onModel();
+
+        },
+        onAfterRendering: function () {
+            this.onModel();
+        },
+            //search option in Allocated slots
+            onSearch12: async function (oEvent) {
+                var sQuery = oEvent.getParameter("newValue").trim();
+                var oTable = this.byId("idAllocatedSlots"); // ID of your Table
+            
+                try {
+                    var oModel = this.getOwnerComponent().getModel(); // Assuming the model is bound to the view
+                    var sPath = "/VDEATILSSet"; // Your EntitySet path
+            
+                    // Fetch the data from the OData service
+                    var aAllData = await new Promise((resolve, reject) => {
+                        oModel.read(sPath, {
+                            success: function (oData) {
+                                resolve(oData.results);
+                            },
+                            error: function (oError) {
+                                console.error("Failed to fetch all data:", oError);
+                                reject(oError);
+                            }
+                        });
+                    });
+            
+                    // If there's a search query, filter the data based on the query
+                    var aFilteredData;
+                    if (sQuery) {
+                        aFilteredData = aAllData.filter(function (oItem) {
+                            return (oItem.Parkinglot && oItem.Parkinglot.includes(sQuery)) ||
+                                (oItem.Vehicleno && oItem.Vehicleno.includes(sQuery)) ||
+                                (oItem.Intime && oItem.Intime.includes(sQuery)) ||
+                                (oItem.Vehicletype && oItem.Vehicletype.includes(sQuery)) ||
+                                (oItem.Processtype && oItem.Processtype.includes(sQuery)) ||
+                                (oItem.Drivername && oItem.Drivername.includes(sQuery)) ||
+                                (oItem.Phonenumber && oItem.Phonenumber.includes(sQuery));
+                        });
+                    } else {
+                        aFilteredData = aAllData; // No search query, use all data
+                    }
+            
+                    // Create a new JSON model with the filtered data
+                    var oFilteredModel = new sap.ui.model.json.JSONModel(aFilteredData);
+            
+                    // Bind the filtered model to the table
+                    oTable.setModel(oFilteredModel);
+                    oTable.bindItems({
+                        path: "/",
+                        template: oTable.getBindingInfo("items").template
+                    });
+            
+                } catch (error) {
+                    console.error("Error fetching or filtering data:", error);
+                }
+            },
+            //search functionality in Reserved slots 
+            onSearch: async function (oEvent) {
+                var sQuery = oEvent.getParameter("newValue").trim();
+                var oTable = this.byId("idReserved"); // ID of your Table
+                
+                try {
+                    var oModel = this.getOwnerComponent().getModel(); // Assuming the model is bound to the view
+                    var sPath = "/RESERVATIONSSet"; // Your EntitySet path
+                    
+                    // Fetch the data from the OData service
+                    var aAllData = await new Promise((resolve, reject) => {
+                        oModel.read(sPath, {
+                            success: function (oData) {
+                                resolve(oData.results);
+                            },
+                            error: function (oError) {
+                                console.error("Failed to fetch all data:", oError);
+                                reject(oError);
+                            }
+                        });
+                    });
+            
+                    // If there's a search query, filter the data based on the query
+                    var aFilteredData;
+                    if (sQuery) {
+                        aFilteredData = aAllData.filter(function (oItem) {
+                            return (oItem.Vendorname && oItem.Vendorname.includes(sQuery)) ||
+                                (oItem.Vendorphno && oItem.Vendorphno.includes(sQuery)) ||
+                                (oItem.Vehicleno && oItem.Vehicleno.includes(sQuery)) ||
+                                (oItem.Drivername && oItem.Drivername.includes(sQuery)) ||
+                                (oItem.Phonenumber && oItem.Phonenumber.includes(sQuery)) ||
+                                (oItem.Vehicletype && oItem.Vehicletype.includes(sQuery)) ||
+                                (oItem.Parkinglot && oItem.Parkinglot.includes(sQuery)) ||
+                                (oItem.Reservedtime && oItem.Reservedtime.includes(sQuery));
+                        });
+                    } else {
+                        aFilteredData = aAllData; // No search query, use all data
+                    }
+            
+                    // Create a new JSON model with the filtered data
+                    var oFilteredModel = new sap.ui.model.json.JSONModel(aFilteredData);
+            
+                    // Bind the filtered model to the table
+                    oTable.setModel(oFilteredModel);
+                    oTable.bindItems({
+                        path: "/",
+                        template: oTable.getBindingInfo("items").template
+                    });
+            
+                } catch (error) {
+                    console.error("Error fetching or filtering data:", error);
+                }
+            },
+            //search functionality in Vendor requests
+            onSearchV: async function (oEvent) {
+                var sQuery = oEvent.getParameter("newValue").trim();
+                var oTable = this.byId("idRequest"); // ID of your Table
+                
+                try {
+                    var oModel = this.getOwnerComponent().getModel(); // Assuming the model is bound to the view
+                    var sPath = "/VENDORRESERVATIONSet"; // Your EntitySet path
+                    
+                    // Fetch the data from the OData service
+                    var aAllData = await new Promise((resolve, reject) => {
+                        oModel.read(sPath, {
+                            success: function (oData) {
+                                resolve(oData.results);
+                            },
+                            error: function (oError) {
+                                console.error("Failed to fetch all data:", oError);
+                                reject(oError);
+                            }
+                        });
+                    });
+            
+                    // If there's a search query, filter the data based on the query
+                    var aFilteredData;
+                    if (sQuery) {
+                        aFilteredData = aAllData.filter(function (oItem) {
+                            return (oItem.Vendorname && oItem.Vendorname.includes(sQuery)) ||
+                                (oItem.Vendorphno && oItem.Vendorphno.includes(sQuery)) ||
+                                (oItem.Vehicleno && oItem.Vehicleno.includes(sQuery)) ||
+                                (oItem.Drivername && oItem.Drivername.includes(sQuery)) ||
+                                (oItem.Phonenumber && oItem.Phonenumber.includes(sQuery)) ||
+                                (oItem.Vehicletype && oItem.Vehicletype.includes(sQuery)) ||
+                                (oItem.Processtype && oItem.Processtype.includes(sQuery)) ||
+                                (oItem.Reservedtime && oItem.Reservedtime.includes(sQuery));
+                        });
+                    } else {
+                        aFilteredData = aAllData; // No search query, use all data
+                    }
+            
+                    // Create a new JSON model with the filtered data
+                    var oFilteredModel = new sap.ui.model.json.JSONModel(aFilteredData);
+            
+                    // Bind the filtered model to the table
+                    oTable.setModel(oFilteredModel);
+                    oTable.bindItems({
+                        path: "/",
+                        template: oTable.getBindingInfo("items").template
+                    });
+            
+                } catch (error) {
+                    console.error("Error fetching or filtering data:", error);
+                }
+            },
+            //search functionality in ALLSLOTS
+            onSearchALL: async function (oEvent) {
+                var sQuery = oEvent.getParameter("newValue").trim();
+                var oTable = this.byId("idAllSlots"); // ID of your Table
+            
+                try {
+                    var oModel = this.getOwnerComponent().getModel(); // Assuming the model is bound to the view
+                    var sPath = "/ParkingslotsSet"; // Your EntitySet path
+            
+                    // Fetch the data from the OData service
+                    var aAllData = await new Promise((resolve, reject) => {
+                        oModel.read(sPath, {
+                            success: function (oData) {
+                                resolve(oData.results);
+                            },
+                            error: function (oError) {
+                                console.error("Failed to fetch all data:", oError);
+                                reject(oError);
+                            }
+                        });
+                    });
+            
+                    // If there's a search query, filter the data based on the query
+                    var aFilteredData;
+                    if (sQuery) {
+                        aFilteredData = aAllData.filter(function (oItem) {
+                            return (oItem.Parkinglot && oItem.Parkinglot.includes(sQuery)) ||
+                                (oItem.Processtype && oItem.Processtype.includes(sQuery)) ||
+                                (oItem.Status && oItem.Status.includes(sQuery));
+                        });
+                    } else {
+                        aFilteredData = aAllData; // No search query, use all data
+                    }
+            
+                    // Create a new JSON model with the filtered data
+                    var oFilteredModel = new sap.ui.model.json.JSONModel(aFilteredData);
+            
+                    // Bind the filtered model to the table
+                    oTable.setModel(oFilteredModel);
+                    oTable.bindItems({
+                        path: "/",
+                        template: oTable.getBindingInfo("items").template
+                    });
+            
+                } catch (error) {
+                    console.error("Error fetching or filtering data:", error);
+                }
+            },
+            //search functionality in history
+            onSearchH: async function (oEvent) {
+                var sQuery = oEvent.getParameter("newValue").trim();
+                var oTable = this.byId("idHistory"); // ID of your Table
+            
+                try {
+                    var oModel = this.getOwnerComponent().getModel(); // Assuming the model is bound to the view
+                    var sPath = "/historySet"; // Your EntitySet path
+            
+                    // Fetch the data from the OData service
+                    var aAllData = await new Promise((resolve, reject) => {
+                        oModel.read(sPath, {
+                            success: function (oData) {
+                                resolve(oData.results);
+                            },
+                            error: function (oError) {
+                                console.error("Failed to fetch all data:", oError);
+                                reject(oError);
+                            }
+                        });
+                    });
+            
+                    // If there's a search query, filter the data based on the query
+                    var aFilteredData;
+                    if (sQuery) {
+                        aFilteredData = aAllData.filter(function (oItem) {
+                            return (oItem.Vehicleno && oItem.Vehicleno.includes(sQuery)) ||
+                                (oItem.Drivername && oItem.Drivername.includes(sQuery)) ||
+                                (oItem.Phonenumber && oItem.Phonenumber.includes(sQuery)) ||
+                                (oItem.Processtype && oItem.Processtype.includes(sQuery)) ||
+                                (oItem.Vehicletype && oItem.Vehicletype.includes(sQuery)) ||
+                                (oItem.Parkinglot && oItem.Parkinglot.includes(sQuery)) ||
+                                (oItem.Intime && oItem.Intime.includes(sQuery)) ||
+                                (oItem.Outtime && oItem.Outtime.includes(sQuery));
+                        });
+                    } else {
+                        aFilteredData = aAllData; // No search query, use all data
+                    }
+            
+                    // Create a new JSON model with the filtered data
+                    var oFilteredModel = new sap.ui.model.json.JSONModel(aFilteredData);
+            
+                    // Bind the filtered model to the table
+                    oTable.setModel(oFilteredModel);
+                    oTable.bindItems({
+                        path: "/",
+                        template: oTable.getBindingInfo("items").template
+                    });
+            
+                } catch (error) {
+                    console.error("Error fetching or filtering data:", error);
+                }
+            },
+            onRejectReservePress: function () {
+                debugger
+                const oThis = this
+                var oModel = this.getOwnerComponent().getModel();
+                const oSelected = this.getView().byId("idRequest").getSelectedItem(),
+                //sUUId = oSelected.getBindingContext().getObject().Uuid,
+                sDriverName = oSelected.getBindingContext().getObject().Drivername,
+                    sDriverMobile = oSelected.getBindingContext().getObject().Phonenumber,
+                    svehicleNo = oSelected.getBindingContext().getObject().Vehicleno,
+                    sVendorphno = oSelected.getBindingContext().getObject().Vendorphno;
+ 
+                oModel.remove(`/VENDORRESERVATIONSet('${svehicleNo}')`, {
+                    success: function () {
+ 
+                        MessageBox.information("Request rejected sucessfully")
+
+                        //   start SMS
+                const accountSid = "ACfcd333bcb3dc2c2febd267ce455a6762"
+                const authToken = "687323f325394ff3b30f44a83444c2b2"
+ 
+                // debugger
+                const toNumber = `+91${sVendorphno}`
+                const fromNumber = '+13613109079';
+                const messageBody = `Hi ${sDriverName},\n\nYour vehicle with registration number ${svehicleNo} is rejected `;
+ 
+ 
+                // Twilio API endpoint for sending messages
+                const url = `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`;
+ 
+ 
+                // Send POST request to Twilio API using jQuery.ajax
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    async: true,
+                    headers: {
+                        'Authorization': 'Basic ' + btoa(accountSid + ':' + authToken)
+                    },
+                    data: {
+                        To: toNumber,
+                        From: fromNumber,
+                        Body: messageBody
+                    },
+                    success: function (data) {
+                        MessageToast.show('if number exists SMS will be sent!');
+                    },
+                    error: function (error) {
+                        MessageToast.show('Failed to send SMS: ' + error);
+                    }
+                });
+ 
+                // sms endR
+                    },
+                    error: function (oError) {
+                        sap.m.MessageBox.error("Failed to reject the request: " + oError.message);
+                    }
+                }) 
+            },
 
     });
 });

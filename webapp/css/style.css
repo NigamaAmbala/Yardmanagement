@@ -23,7 +23,7 @@
   height: 100vh;
   }
   .sidecontent {
-    background-color:lightslategray
+    background-color:darkgray;
   }
   .Flexbox {
     padding-right: 50%;
@@ -31,16 +31,15 @@
   }
   .SimpleForm{
     padding-right: 50%;
-    margin-left: 250px;
-    margin-top: 50px;
+    margin-left: 180px;
+    margin-top: 30px;
   }
-  .Reserveheading{
-    margin-bottom: 20px;
+  .Reserveheading{  
     color: brown;
   }
-  .Hbox{
+  /* .Hbox{
     margin-top: 20px;
-  }
+  } */
   .Button{
     margin-left: 320px;
   }
@@ -96,4 +95,7 @@
 }
 .Reserveslottableclass{
   background-color: lavenderblush;
+}
+.Requestslottableclass{
+  background-color:rgb(245, 241, 199);
 }
